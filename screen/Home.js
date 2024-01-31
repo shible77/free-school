@@ -40,3 +40,5 @@ const styles = StyleSheet.create({
 })
 
 export default Home;
+
+//change for insert in github
