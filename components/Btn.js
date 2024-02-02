@@ -26,5 +26,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     }
 })
-
-//change for insert in github

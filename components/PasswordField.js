@@ -4,13 +4,13 @@ import { darkGreen } from './Constants';
 
 const PasswordField = (props) => {
     return (
-        <View style = {styles.field}>
+        <View style={styles.field}>
             <TextInput
                 {...props}
-                style={{ color: darkGreen, width: '85%' }}
-                placeholderTextColor={darkGreen} />
-            <TouchableOpacity onPress={() => {alert('pressed')}}>
-                <Text style={[styles.text, {color: darkGreen}]}>Show</Text>
+                style={{ color: 'skyblue', width: '85%' }}
+                placeholderTextColor={'skyblue'} />
+            <TouchableOpacity onPress={() => { alert('pressed') }}>
+                <Text style={[styles.text, { color: 'skyblue' }]}>Show</Text>
             </TouchableOpacity>
         </View>
 
@@ -21,20 +21,19 @@ export default PasswordField
 
 const styles = StyleSheet.create({
     field: {
-        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: 'lightskyblue',
+        borderRadius: 10,
         paddingHorizontal: 10,
         width: '78%',
-        backgroundColor: 'rgb(220,220, 220)',
         marginVertical: 10,
-        height: '6%',
+        height: '9%',
         fontSize: 15,
         display: 'flex',
         flexDirection: 'row',
     },
     text: {
-        fontSize: 13,
-        marginVertical: 10
+        fontSize: 12,
+        marginVertical: 13
     }
 })
-
-//change for insert in github

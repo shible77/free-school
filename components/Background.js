@@ -27,4 +27,3 @@ const styles = StyleSheet.create({
     }
 })
 
-//change for insert in github
