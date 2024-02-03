@@ -1,16 +1,21 @@
 import { StyleSheet, TextInput, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+import { Feather } from '@expo/vector-icons';
 import { darkGreen } from './Constants';
 
 const PasswordField = (props) => {
+    // console.log(props.icon)
     return (
         <View style={styles.field}>
+            <View style={{marginVertical: 7, padding:3, borderRadius: 3, marginRight: 7 }}>
+                {props.icon}
+            </View>
             <TextInput
                 {...props}
-                style={{ color: 'skyblue', width: '85%' }}
+                style={{ color: 'skyblue', width: '70%', fontSize: 18 }}
                 placeholderTextColor={'skyblue'} />
-            <TouchableOpacity onPress={() => { alert('pressed') }}>
-                <Text style={[styles.text, { color: 'skyblue' }]}>Show</Text>
+            <TouchableOpacity onPress={props.togglePass}>
+                <Text style={[styles.text, { color: 'skyblue' }]}>{props.showPass? <Feather name="eye" size={24} color="skyblue" /> : <Feather name="eye-off" size={24} color="skyblue" />}</Text>
             </TouchableOpacity>
         </View>
 
@@ -24,7 +29,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'lightskyblue',
         borderRadius: 10,
-        paddingHorizontal: 10,
+        paddingHorizontal: 5,
         width: '78%',
         marginVertical: 10,
         height: '9%',
@@ -34,6 +39,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 12,
-        marginVertical: 13
+        marginVertical: 13,
+        paddingLeft: 10
     }
 })

@@ -1,13 +1,16 @@
 import React from 'react';
-import {TextInput, StyleSheet} from 'react-native';
+import {TextInput, StyleSheet, View} from 'react-native';
 import {darkGreen, green} from './Constants';
 
 const Field = (props) => {
   return (
+    <View style={[styles.field, {color: 'sky blue'}]}>
+      <View style={{marginVertical: 8, padding:3, borderRadius: 3, marginRight: 7 }}>{props.icon}</View>
     <TextInput
       {...props}
-      style={[styles.field,{color: 'skyblue'}]}
+      style={[styles.input,{color: 'skyblue'}]}
       placeholderTextColor={'skyblue'}></TextInput>
+    </View>
   );
 };
 
@@ -18,11 +21,17 @@ const styles = StyleSheet.create({
     borderWidth: 2, 
     borderColor: 'lightskyblue',
     borderRadius: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     width: '78%',
     marginVertical: 10,
     height: '9%',
-    fontSize: 15
+    fontSize: 15,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  input: {
+    marginVertical: 11,
+    fontSize:  18,
   }
   
 })
