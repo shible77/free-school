@@ -6,12 +6,26 @@ import ColourfulText from '../components/ColorfulText';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 import ColourfulButton from '../components/ColorfulButton';
 import { Feather } from '@expo/vector-icons';
+import { firebase } from '../config'
 
 const Login = (props) => {
+    const [data, setData] = useState({
+        email: '',
+        password: '',
+      })
     const [showPass, setShowPass] = useState(true);
     const togglePass = () => {
         setShowPass(!showPass);
     }
+
+    const loginUser = async() => {
+        try{
+            await firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+        }catch(err){
+            console.log(err)
+        }
+    }
+
     return (
         <KeyboardAvoidingWrapper>
             <View style={styles.container}>
@@ -23,9 +37,14 @@ const Login = (props) => {
                     <Field placeholder="Email"
                         autoCapitalize="none"
                         icon={<Feather name="mail" size={30} color="skyblue" />}
-                        keyboardType={'email-address'} />
+                        keyboardType={'email-address'} 
+                        value={data.email}
+                        onChangeText={(text)=> setData({...data, email: text})}/>
                     <PasswordField placeholder="Password" autoCapitalize="none" icon={<Feather name="lock" size={30} color="skyblue" />}
-                        secureTextEntry={showPass} showPass={showPass} togglePass={togglePass} />
+                        secureTextEntry={showPass} showPass={showPass} togglePass={togglePass} 
+                        value={data.password}
+                        onChangeText={(text)=> setData({...data, password: text})}
+                        />
 
 
                     <View style={styles.innerView2}>
@@ -34,7 +53,7 @@ const Login = (props) => {
                         </Text>
                     </View>
                     <View style={styles.innerView4}>
-                        <ColourfulButton buttonText={'Login'} color={['aqua', 'deeppink']} press={() => props.navigation.navigate("Login")} style={{ width: '66%', marginRight: 62 }} />
+                        <ColourfulButton buttonText={'Login'} color={['aqua', 'deeppink']} press={loginUser} style={{ width: '66%', marginRight: 62 }} />
                     </View>
 
                     <View style={styles.innerView3}>

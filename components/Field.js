@@ -8,7 +8,7 @@ const Field = (props) => {
       <View style={{marginVertical: 8, padding:3, borderRadius: 3, marginRight: 7 }}>{props.icon}</View>
     <TextInput
       {...props}
-      style={[styles.input,{color: 'skyblue'}]}
+      style={[styles.input,{color: 'skyblue', width: '80%', fontSize: 18}]}
       placeholderTextColor={'skyblue'}></TextInput>
     </View>
   );
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: 11,
     fontSize:  18,
+    paddingLeft: 0
   }
   
 })
