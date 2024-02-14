@@ -9,45 +9,64 @@ import { firebase } from './config';
 
 const Stack = createStackNavigator();
 
-function App() {
+const AuthStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Signup" component={Signup} />
+    </Stack.Navigator>
+  );
+};
+
+const App = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-  const [isVerified, setIsVerified] = useState(false)
+  const [verified, setVerified] = useState(false)
 
   function onAuthStateChanged(user) {
     setUser(user);
-    if (initializing) setInitializing(false)
+    if (initializing) setInitializing(false);
   }
 
   useEffect(() => {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = firebase.auth().onIdTokenChanged((user) => {
+      if (user) {
+        user.getIdTokenResult().then((idTokenResult) => {
+          if (idTokenResult && idTokenResult.claims.email_verified) {
+            setVerified(true)
+          }
+        });
+      }
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
 
   if (initializing) return null;
 
-  if (user && user.emailVerified) {
-    return (
-      <Stack.Navigator initialRouteName="DashBoard" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="DashBoard" component={DashBoard} />
-      </Stack.Navigator>
-    )
-  } else {
-    return (
-      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }} >
-        <Stack.Screen name='Home' component={Home} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-      </Stack.Navigator>
-    )
-  }
-
-}
-
-export default () => {
   return (
     <NavigationContainer>
-      <App />
-    </NavigationContainer>)
-}
+      {user ? (
+        verified ? (
+          <DashBoard />
+        ) : (
+          <AuthStack />
+        )
+      ) : (
+        <AuthStack />
+      )}
+    </NavigationContainer>
+  );
+};
 
+export default App;
