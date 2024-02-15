@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import Field from '../components/Field';
 import PasswordField from '../components/PasswordField';
@@ -8,6 +8,9 @@ import ColourfulButton from '../components/ColorfulButton';
 import { Feather } from '@expo/vector-icons';
 import { firebase } from '../config';
 import Loader from '../components/Loader';
+import ShowMessage from '../components/ShowMessage';
+import { MaterialIcons } from '@expo/vector-icons';
+import ShowAlert from '../components/ShowAlert';
 
 const Login = (props) => {
 
@@ -19,7 +22,11 @@ const Login = (props) => {
   })
   const [showPass1, setShowPass1] = useState(true);
   const [showPass2, setShowPass2] = useState(true);
-  const [showLoader, setShowLoader] = useState(false)
+  const [showLoader, setShowLoader] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
+  const [perfectPass, setPerfectPass] = useState(false);
+  const [passMatched, setPassMatched] = useState(false);
+  const [selectType, setSelectType] = useState(false)
 
   const togglePass1 = () => {
     setShowPass1(!showPass1);
@@ -30,6 +37,13 @@ const Login = (props) => {
   }
 
   const registerUser = async () => {
+    if(data.type === '' || data.email === '' || data.password === '' || data.confirm_password === ''){
+      setSelectType(true);
+      setTimeout(() => {
+        setSelectType(false)
+      },4000)
+      return
+    }
     try {
       setShowLoader(true)
       await firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
@@ -68,8 +82,37 @@ const Login = (props) => {
     }
   }
 
+  useEffect(() => {
+    const checkEmailAvailability = async () => {
+      try {
+        if (data.email.trim() !== '') {
+          const querySnapshot = await firebase.firestore().collection('users').where('email', '==', data.email).get();
+          setEmailExists(!querySnapshot.empty);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    checkEmailAvailability();
+  }, [data.email])
+
+  useEffect(() => {
+    const checkLength = async () => {
+      setPerfectPass(data.password.length < 6 && data.password.length > 0)
+    }
+    checkLength();
+  }, [data.password])
+
+  useEffect(() => {
+    const checkMatch = async () => {
+      setPassMatched(data.password !== data.confirm_password && data.confirm_password.length > 0);
+    }
+    checkMatch();
+  },[data.confirm_password])
+
   return (
-    <View style={{flex: 1}}>{showLoader===true ? <Loader size='large' color='black' /> :
+    <View style={{ flex: 1 }}>{showLoader === true ? <Loader size='large' color='black' /> :
       (<KeyboardAvoidingWrapper>
         <View style={styles.container}>
           <View style={styles.innerView}>
@@ -80,15 +123,18 @@ const Login = (props) => {
               keyboardType={'email-address'}
               value={data.email}
               onChangeText={(text) => setData({ ...data, email: text })} />
+            {emailExists && <ShowMessage message="This email is already in use." icon={<MaterialIcons name="error-outline" size={13} color="red" />} color='red' />}
             <PasswordField placeholder="Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
               secureTextEntry={showPass1} showPass={showPass1} togglePass={togglePass1}
               value={data.password}
               onChangeText={(text) => setData({ ...data, password: text })} />
+              {perfectPass && <ShowMessage message="Password must be at least 6 characters long" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
             <PasswordField placeholder="Confirm Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
               secureTextEntry={showPass2} showPass={showPass2} togglePass={togglePass2}
               value={data.confirm_password}
               onChangeText={(text) => setData({ ...data, confirm_password: text })} />
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+              {passMatched && <ShowMessage message="Both passwords didn't match" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red"/>}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Signup as: </Text>
               <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'teacher' })}>
                 <Radio selected={data.type === 'teacher'} />
@@ -100,6 +146,7 @@ const Login = (props) => {
                 <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Student</Text>
               </TouchableOpacity>
             </View>
+            {selectType && <ShowAlert message="You didn't fill-up all the fields " icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white"/>}
             <View style={styles.innerView2}>
               <ColourfulButton buttonText={'Signup'} color={['aqua', 'deeppink']} press={registerUser} style={{ width: '66%', marginRight: 62 }} />
             </View>
@@ -113,7 +160,7 @@ const Login = (props) => {
           </View>
         </View>
       </KeyboardAvoidingWrapper>
-    )}</View>
+      )}</View>
   );
 };
 
