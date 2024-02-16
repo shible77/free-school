@@ -41,7 +41,7 @@ const Login = (props) => {
       setSelectType(true);
       setTimeout(() => {
         setSelectType(false)
-      },4000)
+      },5000)
       return
     }
     try {
@@ -134,7 +134,7 @@ const Login = (props) => {
               value={data.confirm_password}
               onChangeText={(text) => setData({ ...data, confirm_password: text })} />
               {passMatched && <ShowMessage message="Both passwords didn't match" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red"/>}
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Signup as: </Text>
               <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'teacher' })}>
                 <Radio selected={data.type === 'teacher'} />
@@ -146,7 +146,7 @@ const Login = (props) => {
                 <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Student</Text>
               </TouchableOpacity>
             </View>
-            {selectType && <ShowAlert message="You didn't fill-up all the fields " icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white"/>}
+            {selectType && <ShowAlert message="You can't leave any field empty" icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white" positionStyle={{ position: 'absolute', top: 560, left: 40.5, right: 0 }}/>}
             <View style={styles.innerView2}>
               <ColourfulButton buttonText={'Signup'} color={['aqua', 'deeppink']} press={registerUser} style={{ width: '66%', marginRight: 62 }} />
             </View>
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     width: 160
   },
   innerView2: {
-    marginTop: 60, width: '100%', marginLeft: 60
+    marginTop: 50, width: '100%', marginLeft: 60
   }
   ,
   innerView3: {
@@ -197,5 +197,3 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   }
 })
-
-

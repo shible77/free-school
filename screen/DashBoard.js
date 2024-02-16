@@ -2,7 +2,7 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 import Videos from './Videos';
 import Quiz from './Quiz';
@@ -11,31 +11,48 @@ const Tab = createMaterialTopTabNavigator();
 
 const DashBoard = () => {
   return (
-    <View style={{ flex: 1, marginVertical: 10 }}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       <Tab.Navigator
         screenOptions={{
-          tabBarShowIcon: true,
-          tabBarLabelStyle: { fontSize: 15 },
+          tabBarShowLabel: true,
+          tabBarIndicatorStyle: { opacity: 0 },
+          tabBarStyle: {
+            position: 'absolute',
+            top: 40,
+            left: 10,
+            right: 10,
+            elevation: 0,
+            backgroundColor: '#ffffff',
+            borderRadius: 15,
+            height: 80, // Adjusted height
+          },
         }}
-        style={{ marginVertical: 28 }}
       >
         <Tab.Screen
           name="Videos"
           component={Videos}
           options={{
-            tabBarLabel: 'Videos',
-            tabBarIcon: ({ color, size }) => (
-              <Entypo name="folder-video" size={20} color="black" />
+            tabBarIcon: ({ focused }) => (
+              <View style={{ alignItems: 'center', justifyContent: 'center',top: 5}}>
+                <Entypo name="folder-video" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+              </View>
+            ),
+            tabBarLabel: ({focused}) => (
+              <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>VIDEOS</Text>
             ),
           }}
         />
         <Tab.Screen
-          name="Quiz"
+          name="Quizes"
           component={Quiz}
           options={{
-            tabBarLabel: 'Quiz',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name="quiz" size={20} color="black" />
+            tabBarIcon: ({ focused }) => (
+              <View style={{alignItems: 'center', justifyContent: 'center', top: 5}}>
+                <MaterialIcons name="quiz" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+              </View>
+            ),
+            tabBarLabel: ({focused}) => (
+              <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>QUIZES</Text>
             ),
           }}
         />
