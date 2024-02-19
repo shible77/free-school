@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const courses = () => {
+const MyVideos = () => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>courses</Text>
+      <Text>MyVideos</Text>
     </View>
   )
 }
 
-export default courses
+export default MyVideos
 
 const styles = StyleSheet.create({})
