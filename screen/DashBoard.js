@@ -40,7 +40,7 @@ const DashBoard = () => {
 
   if (userType === 'student') {
     return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>{loading === true ? <Loader size='large' color='black' /> : (
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
         <Tab.Navigator
           screenOptions={{
             tabBarShowLabel: true,
@@ -100,73 +100,73 @@ const DashBoard = () => {
               ),
             }}
           />
-        </Tab.Navigator>)}
+        </Tab.Navigator>
       </View>
     )
   }
+  else if (userType === 'teacher') {
+    return (
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarShowLabel: true,
+            tabBarIndicatorStyle: { opacity: 0 },
+            tabBarStyle: {
+              position: 'absolute',
+              top: 40,
+              left: 10,
+              right: 10,
+              elevation: 0,
+              backgroundColor: '#ffffff',
+              borderRadius: 15,
+              height: 80,
+            },
+          }}
+        >
+          <Tab.Screen
+            name="MyCourses"
+            component={MyCourses}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
+                  <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                </View>
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="MyVideos"
+            component={MyVideos}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
+                  <MaterialIcons name="video-collection" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
 
-  return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>{loading === true ? <Loader size='large' color='black' /> : (
-      <Tab.Navigator
-        screenOptions={{
-          tabBarShowLabel: true,
-          tabBarIndicatorStyle: { opacity: 0 },
-          tabBarStyle: {
-            position: 'absolute',
-            top: 40,
-            left: 10,
-            right: 10,
-            elevation: 0,
-            backgroundColor: '#ffffff',
-            borderRadius: 15,
-            height: 80,
-          },
-        }}
-      >
-        <Tab.Screen
-          name="MyCourses"
-          component={MyCourses}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }}/>
-              </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="MyVideos"
-          component={MyVideos}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                <MaterialIcons name="video-collection" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
-
-              </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>VIDEOS</Text>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="MyQuizzes"
-          component={MyQuizzes}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                <MaterialCommunityIcons name="message-question-outline" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
-              </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>QUIZZES</Text>
-            ),
-          }}
-        />
-        <Tab.Screen
+                </View>
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>VIDEOS</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="MyQuizzes"
+            component={MyQuizzes}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
+                  <MaterialCommunityIcons name="message-question-outline" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                </View>
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>QUIZZES</Text>
+              ),
+            }}
+          />
+          <Tab.Screen
             name="TeacherMenu"
             component={TeacherMenu}
             options={{
@@ -180,10 +180,17 @@ const DashBoard = () => {
               ),
             }}
           />
-      </Tab.Navigator>)
-    }
+        </Tab.Navigator>
+      </View>
+    );
+  }
+  else{
+    return(
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <Loader size='large' color='black' /> 
     </View>
-  );
-};
+    )
+  }
+}
 
 export default DashBoard;

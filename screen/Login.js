@@ -20,7 +20,6 @@ const Login = (props) => {
     const [isCorrect, setIsCorrect] = useState(false)
     const [isFillUpAll, setIsFillUpAll] = useState(false)
     const [isValidEmail, setIsValidEmail] = useState(false)
-    const [showLoader, setShowLoader] = useState(false);
 
     const togglePass = () => {
         setShowPass(!showPass);
@@ -35,10 +34,9 @@ const Login = (props) => {
             return;
         }
         try {
-            setShowLoader(true)
             await firebase.auth().signInWithEmailAndPassword(data.email, data.password)
                 .then(() => {
-                    setShowLoader(false);
+
                 }).catch((err) => {
                     console.log(err.message)
                 })
@@ -63,8 +61,8 @@ const Login = (props) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>{showLoader === true ? <Loader size='large' color='black' /> :
-            (<KeyboardAvoidingWrapper>
+        <View style={{ flex: 1 }}>
+            <KeyboardAvoidingWrapper>
                 <View style={styles.container}>
                     <View style={styles.innerView}>
                         <Image source={require('../assets/logo.png')} style={styles.logo} />
@@ -103,7 +101,8 @@ const Login = (props) => {
                         </View>
                     </View>
                 </View>
-            </KeyboardAvoidingWrapper>)}</View>
+            </KeyboardAvoidingWrapper>
+        </View>
     );
 };
 export default Login;
