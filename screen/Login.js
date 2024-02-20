@@ -9,7 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { firebase } from '../config'
 import ShowAlert from '../components/ShowAlert'
 import { MaterialIcons } from '@expo/vector-icons';
-import Loader from '../components/Loader';
+// import Loader from '../components/Loader';
 
 const Login = (props) => {
     const [data, setData] = useState({
@@ -54,7 +54,7 @@ const Login = (props) => {
                 }, 5000)
             }
             else {
-                console.error(error.code, error.message);
+                console.error(error.message);
             }
 
         }
