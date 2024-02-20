@@ -38,25 +38,23 @@ const Login = (props) => {
                 .then(() => {
 
                 }).catch((err) => {
-                    console.log(err.message)
+                    if (err.code === 'auth/invalid-email') {
+                        setIsValidEmail(true);
+                        setTimeout(() => {
+                            setIsValidEmail(false);
+                        }, 5000);
+                    } else if (err.code === 'auth/invalid-login-credentials') {
+                        setIsCorrect(true);
+                        setTimeout(() => {
+                            setIsCorrect(false);
+                        }, 5000);
+                    } else {
+                        console.log(err.message);
+                    }         
                 })
-        } catch (error) {
-            if (error.message === 'auth/invalid-email') {
-                setIsValidEmail(true);
-                setTimeout(() => {
-                    setIsValidEmail(false)
-                }, 5000)
-            }
-            else if (error.message === 'auth/invalid-login-credentials') {
-                setIsCorrect(true);
-                setTimeout(() => {
-                    setIsCorrect(false)
-                }, 5000)
-            }
-            else {
-                console.error(error.message);
-            }
-
+        } catch (err) {
+            console.log(err.code)
+            console.log(err.message);
         }
     }
 

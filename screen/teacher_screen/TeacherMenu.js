@@ -13,7 +13,7 @@ const Menu = () => {
   return (
     <View style={styles.mainPage}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
+        <View style={{display: 'flex', flexDirection: 'row', marginLeft: 10}}>
         <Ionicons name="menu" size={30} color="black" />
           <Text style={{fontSize: 25}}>Menu</Text>
         </View>
