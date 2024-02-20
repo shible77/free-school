@@ -41,17 +41,17 @@ const Login = (props) => {
                     console.log(err.message)
                 })
         } catch (error) {
-            if (error.code === 'auth/invalid-email') {
+            if (error.message === 'auth/invalid-email') {
                 setIsValidEmail(true);
                 setTimeout(() => {
                     setIsValidEmail(false)
-                }, 3000)
+                }, 5000)
             }
-            else if (error.code === 'auth/invalid-login-credentials') {
+            else if (error.message === 'auth/invalid-login-credentials') {
                 setIsCorrect(true);
                 setTimeout(() => {
                     setIsCorrect(false)
-                }, 3000)
+                }, 5000)
             }
             else {
                 console.error(error.code, error.message);

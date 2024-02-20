@@ -66,7 +66,9 @@ const Login = (props) => {
               console.log(err)
             })
             .then(() => {
+              const uId = firebase.auth().currentUser.uid;
               firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+                user_id : uId,
                 email: data.email,
                 password: data.password,
                 type: data.type
