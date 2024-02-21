@@ -10,35 +10,61 @@ const MyCourses = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [courseName, setCourseName] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
+  const [userCourses, setUserCourses] = useState([]);
+
   const openModal = () => {
     setModalVisible(true)
   }
 
+  useEffect(() => {
+    const fetchUserCourses = () => {
+      try {
+        const uID = firebase.auth().currentUser.uid;
+        const unsubscribe = firebase.firestore().collection('courses')
+          .where('teacher_id', '==', uID)
+          .onSnapshot((snapshot) => {
+            const coursesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setUserCourses(coursesData);
+          });
+  
+        // Return a cleanup function to unsubscribe from the snapshot listener
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error fetching user courses:', error);
+      }
+    };
+  
+    // Call the fetchUserCourses function to start listening for real-time updates
+    const unsubscribe = fetchUserCourses();
+  
+    // Return a cleanup function to unsubscribe from the snapshot listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
   const addCourse = async () => {
     try {
       if (courseName.length > 0 && courseDescription.length > 0) {
         const uID = firebase.auth().currentUser.uid;
         const fieldValue = firebase.firestore.FieldValue.serverTimestamp();
         await firebase.firestore().collection('courses').add({
-          title : courseName,
-          description : courseDescription,
-          teacher_id : uID,
+          title: courseName,
+          description: courseDescription,
+          teacher_id: uID,
           doc: fieldValue
         })
-        .then((docRef) => {
-          return docRef.update({
-            course_id: docRef.id
-          });
-        })
-        .then(() => {
-          setCourseName('')
-          setCourseDescription('')
-          setModalVisible(false)
-          alert("Course created successfully");
-        })
-        .catch((err) => {
-          console.log("Error adding course: ", err);
-        })
+          .then((docRef) => {
+            return docRef.update({
+              course_id: docRef.id
+            });
+          })
+          .then(() => {
+            setCourseName('')
+            setCourseDescription('')
+            setModalVisible(false)
+            alert("Course created successfully");
+          })
+          .catch((err) => {
+            console.log("Error adding course: ", err);
+          })
 
       }
     }
@@ -49,7 +75,6 @@ const MyCourses = () => {
   }
 
   return (
-
     <View style={styles.mainPage}>
       {isModalVisible ? <CourseModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} addCourse={addCourse}
         setCourseName={setCourseName} setCourseDescription={setCourseDescription} /> :
@@ -62,6 +87,9 @@ const MyCourses = () => {
                 <Text style={styles.buttonText}>Create Course</Text>
               </TouchableOpacity>
             </View>
+          </View>
+          <View>
+
           </View>
         </ScrollView>)}
     </View>
