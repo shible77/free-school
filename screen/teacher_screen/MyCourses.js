@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-nati
 import React, { useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import CourseModal from '../../components/CourseModal';
-import { firebase } from '@react-native-firebase/firestore';
+import { firebase } from './../../config';
 
 
 const MyCourses = () => {
@@ -14,14 +14,36 @@ const MyCourses = () => {
     setModalVisible(true)
   }
 
-  const addCourse = async() => {
-    try{
-      if (courseName.length > 0 && courseDescription.length > 0){
-          const uID = firebase.auth().currentUser.uid;
+  const addCourse = async () => {
+    try {
+      if (courseName.length > 0 && courseDescription.length > 0) {
+        const uID = firebase.auth().currentUser.uid;
+        const fieldValue = firebase.firestore.FieldValue.serverTimestamp();
+        await firebase.firestore().collection('courses').add({
+          title : courseName,
+          description : courseDescription,
+          teacher_id : uID,
+          doc: fieldValue
+        })
+        .then((docRef) => {
+          return docRef.update({
+            course_id: docRef.id
+          });
+        })
+        .then(() => {
+          setCourseName('')
+          setCourseDescription('')
+          setModalVisible(false)
+          alert("Course created successfully");
+        })
+        .catch((err) => {
+          console.log("Error adding course: ", err);
+        })
+
       }
     }
-    catch(err){
-      console.log(err.code)
+    catch (err) {
+      console.log("Error adding course: ", err)
     }
 
   }
