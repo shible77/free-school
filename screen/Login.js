@@ -9,7 +9,6 @@ import { Feather } from '@expo/vector-icons';
 import { firebase } from '../config'
 import ShowAlert from '../components/ShowAlert'
 import { MaterialIcons } from '@expo/vector-icons';
-// import Loader from '../components/Loader';
 
 const Login = (props) => {
     const [data, setData] = useState({

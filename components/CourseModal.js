@@ -1,9 +1,8 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput, Button } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, Modal, TextInput, Button } from 'react-native'
+import React from 'react'
 
 const CourseModal = (props) => {
-    const [courseName, setCourseName] = useState('');
-    const [courseDescription, setCourseDescription] = useState('');
+
     return (
         <Modal
             visible={props.modalVisible}
@@ -16,16 +15,16 @@ const CourseModal = (props) => {
                     <TextInput
                         style={styles.input}
                         placeholder="Course Name"
-                        value={courseName}
-                        onChangeText={(text) => setCourseName(text)}
+                        value={props.courseName}
+                        onChangeText={(text) => {props.setCourseName(text)}}
                     />
                     <TextInput
                         style={styles.input2}
                         multiline
                         numberOfLines={4}
                         placeholder="Course Description"
-                        value={courseDescription}
-                        onChangeText={(text) => setCourseDescription(text)}
+                        value={props.courseDescription}
+                        onChangeText={(text) => {props.setCourseDescription(text)}}
                     />
                     <View style={styles.modalButtons}>
                         <Button title="Create" onPress={props.addCourse} color={'green'} />

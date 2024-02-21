@@ -31,17 +31,29 @@ const App = () => {
 
   useEffect(() => {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
+    return () => {
+      if (subscriber) {
+        subscriber();
+      }
+    };
   }, []);
+  
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onIdTokenChanged((user) => {
       if (user) {
-        user.getIdTokenResult().then((idTokenResult) => {
-          if (idTokenResult && idTokenResult.claims.email_verified) {
-            setVerified(true)
-          }
-        });
+        user.getIdTokenResult()
+          .then((idTokenResult) => {
+            if (idTokenResult && idTokenResult.claims.email_verified) {
+              setVerified(true);
+            }
+          })
+          .catch((error) => {
+            console.error("Error getting ID token result:", error);
+          });
+      }
+      else{
+        setVerified(false)
       }
     });
 
@@ -67,6 +79,5 @@ const App = () => {
       )}
     </NavigationContainer>
   );
-};
-
+}
 export default App;

@@ -60,8 +60,8 @@ const Login = (props) => {
                 password: '',
                 confirm_password: '',
                 type: ''
-              })
-              props.navigation.navigate("Login")
+              })  
+              props.navigation.navigate("Login")      
             }).catch((err) => {
               console.log(err)
             })
@@ -73,6 +73,7 @@ const Login = (props) => {
                 password: data.password,
                 type: data.type
               })
+              
             }).catch((err) => {
               console.log(err)
             })
