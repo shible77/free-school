@@ -14,7 +14,7 @@ const CourseModal = (props) => {
                     <Text style={styles.modalTitle}>Create Course</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Course Name"
+                        placeholder="Class 8: Math"
                         value={props.courseName}
                         onChangeText={(text) => {props.setCourseName(text)}}
                     />
@@ -22,7 +22,7 @@ const CourseModal = (props) => {
                         style={styles.input2}
                         multiline
                         numberOfLines={4}
-                        placeholder="Course Description"
+                        placeholder="Write short description"
                         value={props.courseDescription}
                         onChangeText={(text) => {props.setCourseDescription(text)}}
                     />
