@@ -37,11 +37,11 @@ const Login = (props) => {
   }
 
   const registerUser = async () => {
-    if(data.type === '' || data.email === '' || data.password === '' || data.confirm_password === ''){
+    if (data.type === '' || data.email === '' || data.password === '' || data.confirm_password === '') {
       setSelectType(true);
       setTimeout(() => {
         setSelectType(false)
-      },5000)
+      }, 5000)
       return
     }
     try {
@@ -60,20 +60,28 @@ const Login = (props) => {
                 password: '',
                 confirm_password: '',
                 type: ''
-              })  
-              props.navigation.navigate("Login")      
+              })
+              props.navigation.navigate("Login")
             }).catch((err) => {
               console.log(err)
             })
             .then(() => {
               const uId = firebase.auth().currentUser.uid;
               firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
-                user_id : uId,
+                user_id: uId,
                 email: data.email,
                 password: data.password,
-                type: data.type
+                type: data.type,
+                name: "",
+                division: "",
+                district: "",
+                upazila: "",
+                dob: null,
+                phone: "",
+                createdAt: null,
+                image: ""
               })
-              
+
             }).catch((err) => {
               console.log(err)
             })
@@ -112,7 +120,7 @@ const Login = (props) => {
       setPassMatched(data.password !== data.confirm_password && data.confirm_password.length > 0);
     }
     checkMatch();
-  },[data.confirm_password])
+  }, [data.confirm_password])
 
   return (
     <View style={{ flex: 1 }}>{showLoader === true ? <Loader size='large' color='black' /> :
@@ -131,12 +139,12 @@ const Login = (props) => {
               secureTextEntry={showPass1} showPass={showPass1} togglePass={togglePass1}
               value={data.password}
               onChangeText={(text) => setData({ ...data, password: text })} />
-              {perfectPass && <ShowMessage message="Password must be at least 6 characters long" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
+            {perfectPass && <ShowMessage message="Password must be at least 6 characters long" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
             <PasswordField placeholder="Confirm Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
               secureTextEntry={showPass2} showPass={showPass2} togglePass={togglePass2}
               value={data.confirm_password}
               onChangeText={(text) => setData({ ...data, confirm_password: text })} />
-              {passMatched && <ShowMessage message="Both passwords didn't match" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red"/>}
+            {passMatched && <ShowMessage message="Both passwords didn't match" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Signup as: </Text>
               <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'teacher' })}>
@@ -149,7 +157,7 @@ const Login = (props) => {
                 <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Student</Text>
               </TouchableOpacity>
             </View>
-            {selectType && <ShowAlert message="You can't leave any field empty" icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white" positionStyle={{ position: 'absolute', top: 560, left: 40.5, right: 0 }}/>}
+            {selectType && <ShowAlert message="You can't leave any field empty" icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white" positionStyle={{ position: 'absolute', top: 560, left: 40.5, right: 0 }} />}
             <View style={styles.innerView2}>
               <ColourfulButton buttonText={'Signup'} color={['aqua', 'deeppink']} press={registerUser} style={{ width: '66%', marginRight: 62 }} />
             </View>

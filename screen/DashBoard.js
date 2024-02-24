@@ -15,6 +15,7 @@ import MyCourses from './teacher_screen/MyCourses';
 import TeacherMenu from './teacher_screen/TeacherMenu';
 import MyVideos from './teacher_screen/MyVideos';
 import MyQuizzes from './teacher_screen/MyQuizzes';
+import MenuNavigation from './teacher_screen/MenuNavigation';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -167,8 +168,8 @@ const DashBoard = () => {
             }}
           />
           <Tab.Screen
-            name="TeacherMenu"
-            component={TeacherMenu}
+            name="MenuNavigation"
+            component={MenuNavigation}
             options={{
               tabBarIcon: ({ focused }) => (
                 <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
