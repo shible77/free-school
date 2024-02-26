@@ -6,6 +6,8 @@ import { firebase } from './../../config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 
 
 
@@ -84,57 +86,55 @@ const MyCourses = () => {
   }
   return (
     <View style={styles.mainPage}>
-      {isModalVisible ? <CourseModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} addCourse={addCourse}
-        setCourseName={setCourseName} setCourseDescription={setCourseDescription} /> :
-        (<>
-          <View style={styles.scrollViewContent}>
-            <View style={{ display: 'flex', flexDirection: 'row', marginLeft: 18 }}>
-              <Feather name="book-open" size={28} color="black" style={{ marginVertical: 2 }} />
-              <Text style={{ fontSize: 25 }}>Courses</Text>
-              <View style={styles.myButton}>
-                <TouchableOpacity onPress={openModal} >
-                  <View style={{display: 'flex', flexDirection : 'row'}}>
-                    <Ionicons name="add-circle-outline" size={20} color="white" />
-                    <Text style={styles.buttonText}> Create Course</Text>
-                  </View>
+      <View>
+        {isModalVisible ? <CourseModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} addCourse={addCourse}
+          setCourseName={setCourseName} setCourseDescription={setCourseDescription} /> : null}
+      </View>
+      <View style={styles.heading}>
+        <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'row' }}>
+          <Feather name="book-open" size={30} color="black" style={{ marginVertical: 2 }} />
+          <Text style={{ fontSize: 25 }}> Courses</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end', marginBottom: 4 }}>
+          <TouchableOpacity onPress={openModal} style={{flexDirection : 'row'}}>
+            <Octicons name="diff-added" size={24} color="black" />
+            <Text style={{ fontSize: 16, marginVertical : 2}}> CREATE</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.search}>
+        <View style={styles.field}>
+          <View style={{ marginVertical: 8, padding: 3, borderRadius: 3, marginRight: 5 }}><AntDesign name="search1" size={24} color="black" /></View>
+          <TextInput
+            style={{ color: 'black', width: '80%', fontSize: 18 }}
+            placeholder='Class 8: Math'
+            cursorColor={'black'}
+            onChangeText={(text) => setSearchText(text)}></TextInput>
+        </View>
+        <TouchableOpacity onPress={searchCourse} >
+          <View style={styles.myButton2}>
+            <Text style={styles.buttonText}>Search</Text>
+          </View>
+        </TouchableOpacity>
 
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          <View style={styles.search}>
-            <View style={styles.field}>
-              <View style={{ marginVertical: 8, padding: 3, borderRadius: 3, marginRight: 5 }}><AntDesign name="search1" size={24} color="black" /></View>
-              <TextInput
-                style={{ color: 'black', width: '80%', fontSize: 18 }}
-                placeholder='Class 8: Math'
-                cursorColor={'black'}
-                onChangeText={(text) => setSearchText(text)}></TextInput>
-            </View>
-            <View style={styles.myButton2}>
-              <TouchableOpacity onPress={searchCourse} >
-                <Text style={styles.buttonText}>Search</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View View style={[styles.courseListing, { justifyContent: userCourses.length === 0 ? 'center' : null }, { alignItems: userCourses.length === 0 ? 'center' : null }]} >
-            {userCourses.length === 0 ? <Text>NO course created yet</Text> :
-              (<FlatList
-                data={userCourses}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <Pressable onPress={() => alert('Press Worked')}>
-                    <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
-                      <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
-                      <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>
-                      <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{'Created at: ' + item.doc.toDate().toLocaleDateString()}</Text>
-                    </LinearGradient>
-                  </Pressable>
-                )}
-              />)}
-          </View>
-        </>)}
-    </View>
+      </View>
+      <View View style={[styles.courseListing, { justifyContent: userCourses.length === 0 ? 'center' : null }, { alignItems: userCourses.length === 0 ? 'center' : null }]} >
+        {userCourses.length === 0 ? <Text>NO course created yet</Text> :
+          (<FlatList
+            data={userCourses}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Pressable onPress={() => alert('Press Worked')}>
+                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
+                  <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
+                  <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>
+                  <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{'Created at: ' + item.doc.toDate().toLocaleDateString()}</Text>
+                </LinearGradient>
+              </Pressable>
+            )}
+          />)}
+      </View>
+    </View >
   )
 }
 
@@ -146,8 +146,12 @@ const styles = StyleSheet.create({
     marginTop: 80,
     flexDirection: 'column'
   },
-  scrollViewContent: {
-    marginTop: 50
+  heading: {
+    marginTop: 50,
+    width: '90%',
+    alignSelf: 'center',
+    display: 'flex',
+    flexDirection: 'row',
   },
   myButton: {
     backgroundColor: 'firebrick',
@@ -155,8 +159,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 4,
     height: 40,
-    marginLeft: 80,
+    marginLeft: 130,
     width: '40%',
+    display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -166,7 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 4,
     height: 50,
-    width: '34%',
+    width: '100%',
     margin: 9,
     // marginTop: 9,
     justifyContent: 'center',
@@ -181,7 +187,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     margin: 5,
-    marginLeft: 18
+    alignSelf: 'center'
   },
   field: {
     borderWidth: 2,

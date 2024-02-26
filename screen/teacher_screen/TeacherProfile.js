@@ -2,18 +2,21 @@ import { ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TextInput,
 import React, { useState, useEffect } from 'react'
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { firebase } from '../../config';
 import Loader from '../../components/Loader';
 import UploadModal from '../../components/UploadModal';
 import * as ImagePicker from 'expo-image-picker';
-import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
+
+import axios from 'axios';
 
 const TeacherProfile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false)
-   
+    const navigation = useNavigation();
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
@@ -22,40 +25,40 @@ const TeacherProfile = () => {
                     alert('Sorry, we need camera roll permissions to make this work!');
                 }
             }
-        })();
+        });
     }, []);
 
     useEffect(() => {
         const fetchData = () => {
-          try {
-            setLoading(true);
-            const userDocRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
-      
-            // Use onSnapshot to listen for real-time updates
-            const unsubscribe = userDocRef.onSnapshot((doc) => {
-              if (doc.exists) {
-                setUserData(doc.data());
+            try {
+                setLoading(true);
+                const userDocRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
+
+                // Use onSnapshot to listen for real-time updates
+                const unsubscribe = userDocRef.onSnapshot((doc) => {
+                    if (doc.exists) {
+                        setUserData(doc.data());
+                        setLoading(false);
+                    } else {
+                        // Handle the case where the document doesn't exist
+                        setUserData(null);
+                        setLoading(false);
+                    }
+                });
+
+                // Clean up the listener when the component unmounts or changes
+                return () => {
+                    unsubscribe();
+                };
+            } catch (err) {
+                console.log(err.message);
                 setLoading(false);
-              } else {
-                // Handle the case where the document doesn't exist
-                setUserData(null);
-                setLoading(false);
-              }
-            });
-      
-            // Clean up the listener when the component unmounts or changes
-            return () => {
-              unsubscribe();
-            };
-          } catch (err) {
-            console.log(err.message);
-            setLoading(false);
-          }
+            }
         };
-      
+
         fetchData();
-      }, []);
-      
+    }, []);
+
 
     const openModal = () => {
         setModalVisible(!modalVisible)
@@ -114,13 +117,13 @@ const TeacherProfile = () => {
             );
 
             const result = response.data;
-            console.log(result.url)
-            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.url})
-            .then(() => {
-                setModalVisible(false)
-            }).catch((err) => {
-                console.log("firebase err : " + err.code)
-            })
+            // console.log(result.url)
+            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.url })
+                .then(() => {
+                    setModalVisible(false)
+                }).catch((err) => {
+                    console.log("firebase err : " + err.code)
+                })
 
         } catch (error) {
             console.error('Error uploading to Cloudinary:', error.message);
@@ -131,11 +134,24 @@ const TeacherProfile = () => {
     return (
         <View style={styles.mainContainer}>
             <View>
-                {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture}/> : null}
+                {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture} /> : null}
             </View>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <FontAwesome5 name="arrow-left" size={20} color="black" />
+                <Text style={{ fontSize: 16 }}> Go Back</Text>
+            </TouchableOpacity>
+
             <View style={styles.heading}>
-                <FontAwesome6 name="circle-user" size={30} color="black" />
-                <Text style={{ fontSize: 25 }}> Profile</Text>
+                <View style={{ flex: 1, alignItems: 'flex-start', justifyContent: 'flex-start', flexDirection: 'row' }}>
+                    <FontAwesome6 name="circle-user" size={30} color="black" />
+                    <Text style={{ fontSize: 25 }}> Profile</Text>
+                </View>
+                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end'}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('EditProfile')}} style={{ flexDirection: 'row'}}>
+                        <Feather name="edit" size={24} color="black" />
+                        <Text style={{ fontSize: 16, marginVertical : 2 }}> EDIT</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             {loading === true ? (
                 <Loader color='black' />
@@ -157,7 +173,7 @@ const TeacherProfile = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholderTextColor={'dimgray'}
-                                value={userData.name || 'Not Provided Yet'}
+                                value={userData.name ? userData.name : 'Not Provided Yet'}
                                 editable={false}
                             />
                         </View>
@@ -166,7 +182,7 @@ const TeacherProfile = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholderTextColor={'dimgray'}
-                                value={userData.email || 'Not Provided Yet'}
+                                value={userData.email ? userData.email : 'Not Provided Yet'}
                                 editable={false}
                             />
                         </View>
@@ -175,7 +191,7 @@ const TeacherProfile = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholderTextColor={'dimgray'}
-                                value={userData.phone || 'Not Provided Yet'}
+                                value={userData.phone ? userData.phone : 'Not Provided Yet'}
                                 editable={false}
                             />
                         </View>
@@ -213,13 +229,20 @@ const styles = StyleSheet.create({
         marginTop: 120,
         flexDirection: 'column',
     },
+    backButton: {
+        marginLeft: 15,
+        display: 'flex',
+        flexDirection: 'row',
+        marginTop: 5,
+        width: '90%',
+        justifyContent: 'flex-start'
+    },
     heading: {
-        marginTop: 10,
-        height: 40,
+        marginTop: 20,
         width: '90%',
         alignSelf: 'center',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     content: {
         marginTop: 10,
