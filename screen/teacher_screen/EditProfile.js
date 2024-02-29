@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 import DateModal from '../../components/DateModal';
 
 
+
 const EditProfile = () => {
     const [userData, setUserData] = useState(null);
     const navigation = useNavigation();
@@ -18,7 +19,7 @@ const EditProfile = () => {
     const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
     const today = new Date();
     const startDate = getFormatedDate(
-        today.setDate(today.getDate() + 1),
+        today.setDate(today.getDate()),
         "YYYY/MM/DD"
     );
     const [selectedStartDate, setSelectedStartDate] = useState("");
@@ -42,6 +43,17 @@ const EditProfile = () => {
     const [divisions, setDivisions] = useState([])
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
+    const [phoneError, setPhoneError] = useState('');
+    const [showMessage, setShowMessage] = useState(false)
+
+    useEffect(() => {
+        // Validate phone number when userData changes
+        if (userData && userData.phone && userData.phone.length !== 11) {
+            setPhoneError('Please enter a valid phone number with 11 digits.');
+        } else {
+            setPhoneError('');
+        }
+    }, [userData]);
 
     useEffect(() => {
         // Fetch divisions
@@ -87,33 +99,71 @@ const EditProfile = () => {
     }, [selectedDivision, selectedDistrict]);
 
     useEffect(() => {
-        const fetchData = () => {
+        const fetchData = async () => {
             try {
                 const userDocRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
-                const unsubscribe = userDocRef.onSnapshot((doc) => {
-                    setUserData(doc.data());
-                });
-                return () => {
-                    unsubscribe();
-                };
+                const doc = await userDocRef.get();
+    
+                if (doc.exists) {
+                    const userData = doc.data();
+                    setUserData(userData);
+    
+                    if (userData.dob) {
+                        const date = new Date(userData.dob.toDate());
+                        setSelectedStartDate(getFormatedDate(date, "YYYY/MM/DD"));
+                    }
+                }
             } catch (err) {
                 console.log(err.message);
             }
         };
-
+    
         fetchData();
     }, []);
+    
+
+
+    const handleSubmit = async () => {
+        try {
+            const parts = selectedStartDate.split('/');
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1; // Months are zero-based
+            const day = parseInt(parts[2], 10);
+
+            const dateObject = new Date(year, month, day);
+
+            const timestamp = firebase.firestore.Timestamp.fromDate(dateObject);
+
+            await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
+                name: userData.name,
+                phone: userData.phone,
+                division: selectedDivision.name,
+                district: selectedDistrict.name,
+                upazila: selectedUpazila.name,
+                dob: timestamp
+            }).then(() => {
+                setShowMessage(true);
+                setTimeout(() => {
+                    setShowMessage(false);
+                }, 6000);
+            }).catch((err) => {
+                console.log(err);
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
 
 
     return (
         <View style={styles.mainContainer}>
-            {openStartDatePicker ? <DateModal openStartDatePicker={openStartDatePicker} 
-            startDate={startDate} startedDate={startedDate}
-            handleChangeStartDate={handleChangeStartDate} 
-            setSelectedStartDate={setSelectedStartDate}
-            handleOnPressStartDate={handleOnPressStartDate}
-            
+            {openStartDatePicker ? <DateModal openStartDatePicker={openStartDatePicker}
+                startDate={startDate} startedDate={startedDate}
+                handleChangeStartDate={handleChangeStartDate}
+                setSelectedStartDate={setSelectedStartDate}
+                handleOnPressStartDate={handleOnPressStartDate}
+
             /> : null}
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <FontAwesome5 name="arrow-left" size={20} color="black" />
@@ -126,89 +176,98 @@ const EditProfile = () => {
                 </View>
             </View>
             {userData ?
-                (<ScrollView contentContainerStyle={styles.content}>
-                    <View style={styles.details}>
-                        <View style={styles.inputField}>
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Full Name:</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholderTextColor={'dimgray'}
-                                cursorColor={'black'}
-                                value={userData.name}
-                                onChangeText={(text) => setUserData({ ...userData, name: text })}
-                            />
-                        </View>
-                        <View style={styles.inputField}>
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Phone: </Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholderTextColor={'dimgray'}
-                                value={userData.phone}
-
-                            />
-                        </View>
-                        <View style={styles.inputField}>
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
-                            <TouchableOpacity onPress={handleOnPressStartDate}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholderTextColor={'dimgray'}
-                                    value={selectedStartDate || "Click to select date"}
-                                    editable={false}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View>
-                            {/* Division Dropdown */}
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Select Division: </Text>
-                            <Picker
-                                selectedValue={selectedDivision}
-                                onValueChange={(itemValue) => setSelectedDivision(itemValue)}
-                                style={styles.pickerStyle}
-                            >
-                                {[defaultDivision, ...divisions].map((division, index) => (
-                                    <Picker.Item key={index} label={division.name} value={division} />
-                                ))}
-                            </Picker>
-
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Select District: </Text>
-                            <Picker
-                                selectedValue={selectedDistrict}
-                                onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
-                                style={styles.pickerStyle}
-                            >
-                                {[defaultDistrict, ...districts].map((district, index) => (
-                                    <Picker.Item
-                                        key={index}
-                                        label={district.name}
-                                        value={district}
+                (
+                    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                        <ScrollView contentContainerStyle={styles.content}>
+                            <View style={styles.details}>
+                                <View style={styles.inputField}>
+                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Full Name:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholderTextColor={'dimgray'}
+                                        cursorColor={'black'}
+                                        value={userData.name}
+                                        onChangeText={(text) => setUserData({ ...userData, name: text })}
                                     />
-                                ))}
-                            </Picker>
-
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Select Upazila: </Text>
-                            <Picker
-                                selectedValue={selectedUpazila}
-                                onValueChange={(itemValue) => setSelectedUpazila(itemValue)}
-                                style={styles.pickerStyle}
-                            >
-                                {[defaultUpazila, ...upazilas].map((upazila, index) => (
-                                    <Picker.Item
-                                        key={index}
-                                        label={upazila.name}
-                                        value={upazila}
+                                </View>
+                                <View style={styles.inputField}>
+                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Phone: </Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholderTextColor={'dimgray'}
+                                        cursorColor={'black'}
+                                        keyboardType='phone-pad'
+                                        value={userData.phone}
+                                        onChangeText={(text) => setUserData({ ...userData, phone: text })}
                                     />
-                                ))}
-                            </Picker>
-                        </View>
-                        <View style={styles.btnView}>
-                            <TouchableOpacity style={styles.submitBtn}>
-                                <Text style={{fontSize : 20}}>Submit</Text>
-                            </TouchableOpacity>
-                        </View>
+                                    {phoneError ? (
+                                        <Text style={{ color: 'red' }}>{phoneError}</Text>
+                                    ) : null}
+                                </View>
+                                <View style={styles.inputField}>
+                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
+                                    <TouchableOpacity onPress={handleOnPressStartDate}>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholderTextColor={'dimgray'}
+                                            value={selectedStartDate || "Click to select date"}
+                                            editable={false}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <View>
+                                    {/* Division Dropdown */}
+                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Select Division: </Text>
+                                    <Picker
+                                        selectedValue={selectedDivision}
+                                        onValueChange={(itemValue) => setSelectedDivision(itemValue)}
+                                        style={styles.pickerStyle}
+                                    >
+                                        {[defaultDivision, ...divisions].map((division, index) => (
+                                            <Picker.Item key={index} label={division.name} value={division} />
+                                        ))}
+                                    </Picker>
 
-                    </View>
-                </ScrollView>) :
+                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Select District: </Text>
+                                    <Picker
+                                        selectedValue={selectedDistrict}
+                                        onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
+                                        style={styles.pickerStyle}
+                                    >
+                                        {[defaultDistrict, ...districts].map((district, index) => (
+                                            <Picker.Item
+                                                key={index}
+                                                label={district.name}
+                                                value={district}
+                                            />
+                                        ))}
+                                    </Picker>
+
+                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Select Upazila: </Text>
+                                    <Picker
+                                        selectedValue={selectedUpazila}
+                                        onValueChange={(itemValue) => setSelectedUpazila(itemValue)}
+                                        style={styles.pickerStyle}
+                                    >
+                                        {[defaultUpazila, ...upazilas].map((upazila, index) => (
+                                            <Picker.Item
+                                                key={index}
+                                                label={upazila.name}
+                                                value={upazila}
+                                            />
+                                        ))}
+                                    </Picker>
+                                </View>
+                                <View style={styles.btnView}>
+                                    {showMessage ? <View style={styles.successMessage}><Text style={{ fontSize: 16 }}>Information Updated Successfully</Text></View> :
+                                        (<TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
+                                            <Text style={{ fontSize: 20 }}>Update</Text>
+                                        </TouchableOpacity>)}
+                                </View>
+
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>) :
                 <Loader color='black' />
             }
         </View>
@@ -273,20 +332,29 @@ const styles = StyleSheet.create({
     },
     pickerStyle: {
         height: 40,
-        color: 'dimgray', 
-        backgroundColor: 'white', 
+        color: 'dimgray',
+        backgroundColor: 'white',
     },
     btnView: {
-        display : 'flex',
-        marginTop : 60
+        display: 'flex',
+        marginTop: 70
     },
-    submitBtn : {
-        backgroundColor : 'seagreen',
-        borderRadius : 10,
-        width : '100%',
-        height : 50,
-        alignSelf : "center",
-        justifyContent : 'center',
-        alignItems : 'center'
+    submitBtn: {
+        backgroundColor: 'seagreen',
+        borderRadius: 10,
+        width: '100%',
+        height: 50,
+        alignSelf: "center",
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    successMessage: {
+        backgroundColor: 'cadetblue',
+        borderRadius: 10,
+        width: '100%',
+        height: 50,
+        alignSelf: "center",
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })

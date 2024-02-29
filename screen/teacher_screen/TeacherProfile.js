@@ -10,6 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
 
+
 import axios from 'axios';
 
 const TeacherProfile = () => {
@@ -37,6 +38,7 @@ const TeacherProfile = () => {
                 // Use onSnapshot to listen for real-time updates
                 const unsubscribe = userDocRef.onSnapshot((doc) => {
                     if (doc.exists) {
+                        
                         setUserData(doc.data());
                         setLoading(false);
                     } else {
@@ -200,7 +202,7 @@ const TeacherProfile = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholderTextColor={'dimgray'}
-                                value={userData.district ? userData.division + ',' + userData.district + ',' + userData.upazila : 'Not Provided Yet'}
+                                value={userData.district ? userData.upazila + ', ' + userData.district + ', ' + userData.division : 'Not Provided Yet'}
                                 editable={false}
                             />
                         </View>
@@ -209,7 +211,8 @@ const TeacherProfile = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholderTextColor={'dimgray'}
-                                value={userData.dob ? userData.dob.toDate().toLocaleDateString() : 'Not Provided Yet'}
+                               
+                                value={userData.dob ? userData.dob.toDate().toLocaleDateString()  : 'Not Provided Yet'}
                                 editable={false}
                             />
                         </View>
@@ -288,14 +291,12 @@ const styles = StyleSheet.create({
         // width : '100%'
     },
     input: {
-        // width: '95%',
-        borderWidth: 2,
-        borderColor: 'dimgray',
+        height: 50,
         fontSize: 17,
-        color: 'black',
-        borderRadius: 10,
         padding: 5,
-        color: 'dimgray'
+        color: 'dimgray',
+        backgroundColor: 'white',
+        paddingLeft: 15
     },
 
 })
