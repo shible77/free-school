@@ -38,7 +38,7 @@ const TeacherProfile = () => {
                 // Use onSnapshot to listen for real-time updates
                 const unsubscribe = userDocRef.onSnapshot((doc) => {
                     if (doc.exists) {
-                        
+
                         setUserData(doc.data());
                         setLoading(false);
                     } else {
@@ -148,10 +148,10 @@ const TeacherProfile = () => {
                     <FontAwesome6 name="circle-user" size={30} color="black" />
                     <Text style={{ fontSize: 25 }}> Profile</Text>
                 </View>
-                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('EditProfile')}} style={{ flexDirection: 'row'}}>
+                <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('EditProfile') }} style={{ flexDirection: 'row' }}>
                         <Feather name="edit" size={24} color="black" />
-                        <Text style={{ fontSize: 16, marginVertical : 2 }}> EDIT</Text>
+                        <Text style={{ fontSize: 16, marginVertical: 2 }}> EDIT</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -168,7 +168,10 @@ const TeacherProfile = () => {
                             <Text>Change Image</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.subHeading}>{"<-------Details Information------->"}</Text>
+                    <View style={styles.subHeading}>
+                        <Text style={{fontSize : 18}}>{"YOUR PERSONAL INFORMATION"}</Text>
+                    </View>
+                    
                     <View style={styles.details}>
                         <View style={styles.inputField}>
                             <Text style={{ fontSize: 17, marginVertical: 5 }}>Full Name:</Text>
@@ -198,6 +201,20 @@ const TeacherProfile = () => {
                             />
                         </View>
                         <View style={styles.inputField}>
+                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor={'dimgray'}
+                                value={userData.dob
+                                    ? userData.dob.toDate().toLocaleDateString('en-CA', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                    }).split('/').reverse().join('/') : 'Not Provided Yet'}
+                                editable={false}
+                            />
+                        </View>
+                        <View style={styles.inputField}>
                             <Text style={{ fontSize: 17, marginVertical: 5 }}>Address: </Text>
                             <TextInput
                                 style={styles.input}
@@ -206,16 +223,7 @@ const TeacherProfile = () => {
                                 editable={false}
                             />
                         </View>
-                        <View style={styles.inputField}>
-                            <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholderTextColor={'dimgray'}
-                               
-                                value={userData.dob ? userData.dob.toDate().toLocaleDateString()  : 'Not Provided Yet'}
-                                editable={false}
-                            />
-                        </View>
+                        
                     </View>
                 </ScrollView>) :
                 <Text style={{ justifyContent: 'center', alignItems: 'center' }}>No user data available</Text>
@@ -282,8 +290,16 @@ const styles = StyleSheet.create({
     },
     subHeading: {
         alignSelf: 'center',
-        marginTop: 10,
-        fontSize: 20
+        marginTop: 20,
+        fontSize: 20,
+        borderWidth : 2,
+        backgroundColor : 'snow',
+        borderRadius : 5,
+        borderColor : 'silver',
+        padding : 10,
+        width : '100%', 
+       justifyContent : 'center',
+       alignItems : 'center',
     },
     inputField: {
         display: 'flex',

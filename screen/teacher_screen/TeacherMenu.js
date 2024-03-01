@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ColourfulButton from '../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
@@ -7,20 +7,28 @@ import { firebase } from './../../config';
 
 const Menu = ({ navigation }) => {
 
-  const [userEmail, setUserEmail] = useState('')
+  const [userData, setUserData] = useState(null)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userSnapshot = await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get();
-        const userData = userSnapshot.data();
-        setUserEmail(userData.email);
-      } catch (err) {
-        console.log(err.message);
-      }
+    const unsubscribe = firebase
+      .firestore()
+      .collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .onSnapshot((snapshot) => {
+        if (snapshot.exists) {
+          setUserData(snapshot.data());
+        } else {
+          // Handle the case when the document doesn't exist
+          setUserData(null);
+        }
+      });
+  
+    // Cleanup function to unsubscribe from the listener when the component unmounts
+    return () => {
+      unsubscribe();
     };
-    fetchData();
   }, []);
+  
 
   const logoutUser = () => {
     firebase.auth().signOut();
@@ -28,18 +36,24 @@ const Menu = ({ navigation }) => {
 
   return (
     <View style={styles.mainPage}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={{ display: 'flex', flexDirection: 'row', marginLeft: 20 }}>
-          <Ionicons name="menu" size={30} color="black" />
-          <Text style={{ fontSize: 25 }}>Menu</Text>
-        </View>
-        <TouchableOpacity onPress={() => {navigation.navigate('TeacherProfile')}}>
-          <View style={styles.profile}>
-            <FontAwesome name="user-circle-o" size={24} color="white" />
-            <Text style={{ fontSize: 18, color: 'white' }}>{' ' + userEmail}</Text>
+      {userData ?
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={{ display: 'flex', flexDirection: 'row', marginLeft: 20 }}>
+            <Ionicons name="menu" size={30} color="black" />
+            <Text style={{ fontSize: 25 }}>Menu</Text>
           </View>
-        </TouchableOpacity>
-      </ScrollView>
+          <TouchableOpacity onPress={() => { navigation.navigate('TeacherProfile') }}>
+            <View style={styles.profile}>
+              {userData.image ?
+                <Image
+                  style={styles.image}
+                  source={{ uri: userData.image }}
+                /> :
+                <FontAwesome name="user-circle-o" size={30} color="black" />}
+              <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop: 5 }}>{' ' + userData.name ? userData.name : userData.email}</Text>
+            </View>
+          </TouchableOpacity>
+        </ScrollView> : <Text>No Data available</Text>}
       <View style={styles.buttonView}>
         <ColourfulButton buttonText={'Logout'} color={['aqua', 'deeppink']} press={logoutUser} />
       </View>
@@ -78,6 +92,12 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: 'center',
     marginTop: 10,
-    backgroundColor: 'dimgray'
-  }
+    backgroundColor: 'white'
+  },
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    // alignSelf: 'center'
+  },
 })
