@@ -5,14 +5,13 @@ import CourseModal from '../../components/CourseModal';
 import { firebase } from './../../config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
-import { FontAwesome6 } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 
 
 const MyCourses = () => {
-
+  const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [courseName, setCourseName] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
@@ -124,7 +123,7 @@ const MyCourses = () => {
             data={userCourses}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <Pressable onPress={() => alert('Press Worked')}>
+              <Pressable onPress={() => {navigation.navigate('CourseDetails')}}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
                   <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
                   <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>

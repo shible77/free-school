@@ -172,7 +172,7 @@ const EditProfile = () => {
             <View style={styles.heading}>
                 <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <Feather name="edit" size={30} color="black" />
-                    <Text style={{ fontSize: 25 }}> Edit Profile</Text>
+                    <Text style={{ fontSize: 25 }}> Edit Your Info</Text>
                 </View>
             </View>
             {userData ?

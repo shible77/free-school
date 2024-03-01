@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, Modal, TextInput, Button, ActivityIndicator } from 'react-native'
 import React from 'react'
 
 const UploadModal = (props) => {
@@ -10,12 +10,22 @@ const UploadModal = (props) => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Upload Image</Text>
-                    <View style={styles.modalButtons}>
-                        <Button title="Choose Image" onPress={props.pickImage} color={'black'} />
-                        <Button title="Take Photo" onPress={props.takePicture} color={'green'} />
-                        <Button title="cancel" onPress={() => {props.setModalVisible(false)}} color={'red'} />
-                    </View>
+                    {props.uploading === true ? (
+                        <>
+                            <Text style={styles.modalTitle}>Uploading Image</Text>
+                            <ActivityIndicator size={'large'} color={'black'} />
+                        </>
+                    ) : (
+                        <>
+                            <Text style={styles.modalTitle}>Upload Image</Text>
+                            <View style={styles.modalButtons}>
+                                <Button title="Choose Image" onPress={props.pickImage} color={'cadetblue'} />
+                                <Button title="Take Photo" onPress={props.takePicture} color={'seagreen'} />
+                                <Button title="cancel" onPress={() => { props.setModalVisible(false) }} color={'red'} />
+                            </View>
+                        </>
+                    )}
+
                 </View>
             </View>
         </Modal>
@@ -33,15 +43,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        backgroundColor: 'white',
+        backgroundColor: '#28282B',
         padding: 20,
         borderRadius: 10,
-        width: '90%',
+        width: '95%',
     },
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+        color : 'white'
     },
     modalButtons: {
         flexDirection: 'row',

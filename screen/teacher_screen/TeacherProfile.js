@@ -11,11 +11,13 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
+
 import axios from 'axios';
 
 const TeacherProfile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
     const navigation = useNavigation();
     useEffect(() => {
@@ -103,6 +105,7 @@ const TeacherProfile = () => {
 
             const preset_key = "uploadimage";
             const cloud_name = "doh71p23w";
+            setUploading(true)
             const response = await axios.post(
                 `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
                 data,
@@ -122,6 +125,7 @@ const TeacherProfile = () => {
             // console.log(result.url)
             firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.url })
                 .then(() => {
+                    setUploading(false)
                     setModalVisible(false)
                 }).catch((err) => {
                     console.log("firebase err : " + err.code)
@@ -136,7 +140,7 @@ const TeacherProfile = () => {
     return (
         <View style={styles.mainContainer}>
             <View>
-                {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture} /> : null}
+                {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture} uploading={uploading}/> : null}
             </View>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <FontAwesome5 name="arrow-left" size={20} color="black" />

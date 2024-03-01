@@ -11,11 +11,10 @@ import Courses from './student_screen/Courses';
 import Menu from './student_screen/Menu';
 import Loader from './../components/Loader'
 import { firebase } from '../config'
-import MyCourses from './teacher_screen/MyCourses';
-import TeacherMenu from './teacher_screen/TeacherMenu';
 import MyVideos from './teacher_screen/MyVideos';
 import MyQuizzes from './teacher_screen/MyQuizzes';
 import MenuNavigation from './teacher_screen/MenuNavigation';
+import CoursesNavigation from './teacher_screen/CoursesNavigation';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -125,8 +124,8 @@ const DashBoard = () => {
           }}
         >
           <Tab.Screen
-            name="MyCourses"
-            component={MyCourses}
+            name="CoursesNavigation"
+            component={CoursesNavigation}
             options={{
               tabBarIcon: ({ focused }) => (
                 <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
