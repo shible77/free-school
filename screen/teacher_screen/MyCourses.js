@@ -123,7 +123,7 @@ const MyCourses = () => {
             data={userCourses}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <Pressable onPress={() => {navigation.navigate('CourseDetails',{ courseData: item })}}>
+              <Pressable onPress={() => {navigation.navigate('CourseDetails',{ courseId: item.id })}}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
                   <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
                   <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>

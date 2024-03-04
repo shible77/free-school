@@ -9,6 +9,8 @@ import Loader from '../../components/Loader';
 import { Picker } from '@react-native-picker/picker';
 import { getFormatedDate } from "react-native-modern-datepicker";
 import DateModal from '../../components/DateModal';
+import ToastNotification from '../../components/Toast';
+import { AntDesign } from '@expo/vector-icons';
 
 
 
@@ -24,6 +26,7 @@ const EditProfile = () => {
     );
     const [selectedStartDate, setSelectedStartDate] = useState("");
     const [startedDate, setStartedDate] = useState(startDate);
+    const [showToast, setShowToast] = useState(false);
 
     function handleChangeStartDate(propDate) {
         setStartedDate(propDate);
@@ -103,11 +106,11 @@ const EditProfile = () => {
             try {
                 const userDocRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
                 const doc = await userDocRef.get();
-    
+
                 if (doc.exists) {
                     const userData = doc.data();
                     setUserData(userData);
-    
+
                     if (userData.dob) {
                         const date = new Date(userData.dob.toDate());
                         setSelectedStartDate(getFormatedDate(date, "YYYY/MM/DD"));
@@ -117,10 +120,10 @@ const EditProfile = () => {
                 console.log(err.message);
             }
         };
-    
+
         fetchData();
     }, []);
-    
+
 
 
     const handleSubmit = async () => {
@@ -142,10 +145,10 @@ const EditProfile = () => {
                 upazila: selectedUpazila.name,
                 dob: timestamp
             }).then(() => {
-                setShowMessage(true);
+                setShowToast(true)
                 setTimeout(() => {
-                    setShowMessage(false);
-                }, 6000);
+                    setShowToast(false);
+                }, 3000);
             }).catch((err) => {
                 console.log(err);
             });
@@ -259,17 +262,22 @@ const EditProfile = () => {
                                     </Picker>
                                 </View>
                                 <View style={styles.btnView}>
-                                    {showMessage ? <View style={styles.successMessage}><Text style={{ fontSize: 16 }}>Information Updated Successfully</Text></View> :
-                                        (<TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
-                                            <Text style={{ fontSize: 20 }}>Update</Text>
-                                        </TouchableOpacity>)}
+                                    <TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
+                                        <Text style={{ fontSize: 20 }}>Update</Text>
+                                    </TouchableOpacity>
                                 </View>
+
 
                             </View>
                         </ScrollView>
                     </KeyboardAvoidingView>) :
                 <Loader color='black' />
             }
+            {showToast ? <ToastNotification
+                icon={<AntDesign name="checkcircle" size={27} color="white" />}
+                message='Your Info Updated Successfully'
+                color="green"
+                bottom={55} /> : null}
         </View>
     )
 }
@@ -280,7 +288,7 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         marginTop: 120,
-        flexDirection: 'column'
+        flexDirection: 'column',
     },
     backButton: {
         marginLeft: 15,

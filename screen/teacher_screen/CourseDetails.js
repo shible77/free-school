@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -10,8 +10,23 @@ import { firebase } from '../../config'
 
 const CourseDetails = ({ route }) => {
   const navigation = useNavigation();
-  const [courseData, setCourseData] = useState(route.params.courseData);
-  // console.log(courseData)
+  const courseId = route.params.courseId
+  const [courseData, setCourseData] = useState(null)
+ 
+  useEffect(() => {
+    const fetchCourseData = () => {
+      try {
+        const unsubscribe = firebase.firestore().collection('courses').doc(courseId).onSnapshot((doc) => {
+          setCourseData(doc.data())
+        })
+        return () => unsubscribe() //cleanup when component is unmounted
+      } catch (err) {
+        console.log(err.code)
+      }
+    }
+    const unsubscribe = fetchCourseData()
+    return () => unsubscribe();
+  }, [])
 
   return (
     <View style={styles.mainContainer}>
@@ -24,14 +39,14 @@ const CourseDetails = ({ route }) => {
           <AntDesign name="layout" size={30} color="black" />
           <Text style={{ fontSize: 25 }}> Course Details</Text>
         </View>
-        <TouchableOpacity onPress={() => { navigation.navigate('EditCourseDetails') }}>
+        <TouchableOpacity onPress={() => { navigation.navigate('EditCourseDetails', { courseId: courseId }) }}>
           <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
             <Feather name="edit" size={24} color="black" />
             <Text style={{ fontSize: 16, marginVertical: 2 }}>EDIT</Text>
           </View>
         </TouchableOpacity>
       </View>
-      <ScrollView contentContainerStyle={styles.content}>
+      {courseData ? (<ScrollView contentContainerStyle={styles.content}>
         <View style={styles.details}>
           <View style={styles.inputField}>
             <Text style={{ fontSize: 17, marginVertical: 5 }}>Course Title:</Text>
@@ -65,25 +80,28 @@ const CourseDetails = ({ route }) => {
               editable={false}
             />
           </View>
-          <View style={{ alignSelf: 'center', marginTop: 20, backgroundColor: 'snow', width: '100%', height: 50, alignItems: 'center', justifyContent: 'center', borderRadius: 5, borderColor: 'dimgray', borderWidth: 2 }}>
+          <View style={{ alignSelf: 'center', marginTop: 20, backgroundColor: 'snow', width: '90%', height: 50, alignItems: 'center', justifyContent: 'center', borderRadius: 5, borderColor: 'dimgray', borderWidth: 2 }}>
             <Text style={{ fontSize: 20 }}>Your Videos and Quizzes</Text>
           </View>
           <View style={styles.btnView}>
-            <TouchableOpacity onPress={() => { navigation.navigate('Videos') }}>
+            <TouchableOpacity onPress={() => { navigation.navigate('Videos',{courseId : courseData.course_id}) }}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['midnightblue', 'maroon']} style={styles.uploadVideoBtn}>
                 <Text style={styles.btnText}>Videos</Text>
               </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { navigation.navigate('Quizzes') }}>
+            <TouchableOpacity onPress={() => { navigation.navigate('Quizzes',{courseId : courseData.course_id}) }}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['midnightblue', 'maroon']} style={styles.uploadVideoBtn}>
                 <Text style={styles.btnText}>Quizzes</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-
-    </View >
+      </ScrollView>) : (
+        <View>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+        )}
+    </View>
   )
 }
 
@@ -145,7 +163,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15
   },
   btnView: {
-    marginTop: 20,
+    marginTop: 15,
     alignSelf: 'center',
     width: '90%'
   }
