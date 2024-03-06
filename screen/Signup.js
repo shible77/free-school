@@ -72,14 +72,6 @@ const Login = (props) => {
                 email: data.email,
                 password: data.password,
                 type: data.type,
-                name: "",
-                division: "",
-                district: "",
-                upazila: "",
-                dob: null,
-                phone: "",
-                createdAt: null,
-                image: ""
               })
 
             }).catch((err) => {
