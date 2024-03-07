@@ -5,7 +5,9 @@ import Home from './screen/Home';
 import Signup from './screen/Signup';
 import Login from './screen/Login';
 import DashBoard from './screen/DashBoard';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { firebase } from './config';
+
 
 const Stack = createStackNavigator();
 
@@ -23,10 +25,50 @@ const App = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [verified, setVerified] = useState(false)
+  const [storedData, setStoredData] = useState(null)
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('user');
+        const userData = JSON.parse(storedUser);
+    
+        if (!userData) {
+          setStoredData(null);
+        } else {
+          await firebase
+            .auth()
+            .signInWithEmailAndPassword(userData.email, userData.password)
+            .then(() => {
+              // console.log('Login successful')
+            })
+            .catch((err) => {
+              console.log('Error while sign in', err.message);
+            });
+    
+          setStoredData(userData);
+        }
+      } catch (err) {
+        console.log('Error getting user data', err.message);
+      } finally {
+        setLoading(false); // Set loading to false after all operations are complete
+      }
+    };
+    
+    getUser();
+  }, [user])
+
+  // useEffect(() => {
+
+  // },[user])
 
   function onAuthStateChanged(user) {
     setUser(user);
-    if (initializing) setInitializing(false);
+    if (initializing) {
+      setInitializing(false);
+    }
   }
 
   useEffect(() => {
@@ -37,7 +79,7 @@ const App = () => {
       }
     };
   }, []);
-  
+
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onIdTokenChanged((user) => {
@@ -52,7 +94,7 @@ const App = () => {
             console.error("Error getting ID token result:", error);
           });
       }
-      else{
+      else {
         setVerified(false)
       }
     });
@@ -64,7 +106,24 @@ const App = () => {
     };
   }, []);
 
-  if (initializing) return null;
+  if (initializing || loading) return null;
+
+
+  if (!storedData) {
+    return (
+      <NavigationContainer>
+        {user ? (
+          verified ? (
+            <DashBoard />
+          ) : (
+            <AuthStack />
+          )
+        ) : (
+          <AuthStack />
+        )}
+      </NavigationContainer>
+    );
+  }
 
   return (
     <NavigationContainer>
@@ -72,10 +131,10 @@ const App = () => {
         verified ? (
           <DashBoard />
         ) : (
-          <AuthStack />
+          null
         )
       ) : (
-        <AuthStack />
+        null
       )}
     </NavigationContainer>
   );

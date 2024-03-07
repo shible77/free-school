@@ -9,6 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { firebase } from '../config'
 import ShowAlert from '../components/ShowAlert'
 import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login = (props) => {
     const [data, setData] = useState({
@@ -34,8 +35,12 @@ const Login = (props) => {
         }
         try {
             await firebase.auth().signInWithEmailAndPassword(data.email, data.password)
-                .then(() => {
-
+                .then(async() => {
+                    try{
+                        await AsyncStorage.setItem("user", JSON.stringify(data))
+                    }catch(err){
+                        console.log('error store in async storage', err.message)
+                    }
                 }).catch((err) => {
                     if (err.code === 'auth/invalid-email') {
                         setIsValidEmail(true);

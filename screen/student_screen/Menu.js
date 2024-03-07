@@ -3,10 +3,12 @@ import React from 'react'
 import ColourfulButton from '../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
 import {firebase} from './../../config'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Menu = () => {
 
-  const logoutUser = () => {
+  const logoutUser = async() => {
+    await  AsyncStorage.removeItem('user')
     firebase.auth().signOut();
   }
 

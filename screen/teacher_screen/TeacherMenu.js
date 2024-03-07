@@ -4,6 +4,7 @@ import ColourfulButton from '../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { firebase } from './../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Menu = ({ navigation }) => {
 
@@ -30,7 +31,8 @@ const Menu = ({ navigation }) => {
   }, []);
   
 
-  const logoutUser = () => {
+  const logoutUser = async() => {
+    await AsyncStorage.removeItem('user')
     firebase.auth().signOut();
   }
 
