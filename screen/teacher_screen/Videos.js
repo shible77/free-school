@@ -10,6 +10,7 @@ import * as ImagePicker from "expo-image-picker";
 import ToastNotification from '../../components/Toast';
 import { Video } from "expo-av";
 import { UploadingAndroid } from "../../components/UploadingAndroid";
+import VideoUploadModal from './../../components/VideoUploadModal'
 import { firebase } from '../../config'
 
 const Videos = ({ route }) => {
@@ -18,6 +19,8 @@ const Videos = ({ route }) => {
   const [video, setVideo] = useState("");
   const [progress, setProgress] = useState(0);
   const [showToast, setShowToast] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [videoTitle, setVideoTitle] = useState('')
 
 
   async function pickVideo() {
@@ -83,6 +86,7 @@ const Videos = ({ route }) => {
     await firebase.firestore().collection("Videos").add({
       course_id: courseId,
       teacher_id: user_id,
+      video_title : videoTitle,
       video: url,
       uploadedAt: createdAt,
     })
@@ -100,6 +104,11 @@ const Videos = ({ route }) => {
 
   return (
     <View style={styles.mainContainer}>
+      {isModalVisible ? <VideoUploadModal isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        videoTitle={videoTitle}
+        setVideoTitle={setVideoTitle}
+        pickVideo={pickVideo} /> : null}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <FontAwesome5 name="arrow-left" size={20} color="black" />
         <Text style={{ fontSize: 16 }}> Go Back</Text>
@@ -109,7 +118,7 @@ const Videos = ({ route }) => {
           <Octicons name="video" size={30} color="black" />
           <Text style={{ fontSize: 25 }}> Videos</Text>
         </View>
-        <TouchableOpacity onPress={pickVideo}>
+        <TouchableOpacity onPress={()=> {setIsModalVisible(true)}}>
           <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
             <Feather name="upload" size={24} color="black" />
             <Text style={{ fontSize: 16, marginVertical: 2 }}>UPLOAD</Text>
@@ -123,7 +132,7 @@ const Videos = ({ route }) => {
           // Some features of blur are not available on Android
           <UploadingAndroid video={video} progress={progress} />
         ))}
-        {showToast ? <ToastNotification
+      {showToast ? <ToastNotification
         icon={<AntDesign name="checkcircle" size={27} color="white" />}
         message='Video Uploaded Successfully'
         color="green"
