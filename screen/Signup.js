@@ -118,8 +118,8 @@ const Login = (props) => {
   return (
     <View style={{ flex: 1 }}>{showLoader === true ? <><StatusBar hidden={false} /> <Loader size='large' color='black' /></> :
       (<KeyboardAvoidingWrapper>
-        <StatusBar hidden={false} />
         <View style={styles.container}>
+          <StatusBar style="auto" />
           <View style={styles.innerView}>
             <Image source={require('../assets/logo.png')} style={styles.logo} />
             <ColourfulText text={'SIGN UP'} color={['aqua', 'deeppink']} style={{ fontSize: 40 }} />

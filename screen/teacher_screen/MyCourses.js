@@ -85,7 +85,7 @@ const MyCourses = () => {
   }
   return (
     <View style={styles.mainPage}>
-      <StatusBar hidden={false}/>
+      <StatusBar style="auto"/>
       <View>
         {isModalVisible ? <CourseModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} addCourse={addCourse}
           setCourseName={setCourseName} setCourseDescription={setCourseDescription} /> : null}

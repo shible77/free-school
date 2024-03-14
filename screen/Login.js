@@ -65,7 +65,7 @@ const Login = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <StatusBar hidden={false}/>
+            <StatusBar style="auto"/>
             <KeyboardAvoidingWrapper>
                 <View style={styles.container}>
                     <View style={styles.innerView}>
