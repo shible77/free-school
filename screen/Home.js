@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet} from 'react-native';
+import { StatusBar } from 'react-native';
 import Background from '../components/Background';
 import ColourfulText from '../components/ColorfulText';
 import ColourfulButton from '../components/ColorfulButton';
@@ -7,6 +8,7 @@ import ColourfulButton from '../components/ColorfulButton';
 const Home = (props) => {
     return (
         <Background>
+            <StatusBar hidden={false}/>
             <View style={styles.container}>
                 <ColourfulText text={'Lets Start'} color={['#3CB371', 'dodgerblue']} style={{ fontSize: 64 }} />
                 <ColourfulText text={'Teaching'} color={['#3CB371', 'dodgerblue']} style={{ fontSize: 50 }} />

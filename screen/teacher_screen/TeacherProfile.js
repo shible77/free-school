@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Platform } from 'react-native'
+import { ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TextInput, } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -20,16 +20,6 @@ const TeacherProfile = () => {
     const [uploading, setUploading] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
     const navigation = useNavigation();
-    useEffect(() => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
-                }
-            }
-        });
-    }, []);
 
     useEffect(() => {
         const fetchData = () => {
@@ -241,14 +231,14 @@ export default TeacherProfile;
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        marginTop: 120,
+        // marginTop: 120,
         flexDirection: 'column',
     },
     backButton: {
         marginLeft: 15,
         display: 'flex',
         flexDirection: 'row',
-        marginTop: 5,
+        marginTop: 100,
         width: '90%',
         justifyContent: 'flex-start'
     },

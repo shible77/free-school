@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { StatusBar } from 'react-native';
 import Field from '../components/Field';
 import PasswordField from '../components/PasswordField';
 import ColourfulText from '../components/ColorfulText';
@@ -64,6 +65,7 @@ const Login = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
+            <StatusBar hidden={false}/>
             <KeyboardAvoidingWrapper>
                 <View style={styles.container}>
                     <View style={styles.innerView}>

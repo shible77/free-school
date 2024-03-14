@@ -47,7 +47,7 @@ const DashBoard = () => {
             tabBarIndicatorStyle: { opacity: 0 },
             tabBarStyle: {
               position: 'absolute',
-              top: 40,
+              top: 10,
               left: 10,
               right: 10,
               elevation: 0,
@@ -113,7 +113,7 @@ const DashBoard = () => {
             tabBarIndicatorStyle: { opacity: 0 },
             tabBarStyle: {
               position: 'absolute',
-              top: 40,
+              top: 10,
               left: 10,
               right: 10,
               elevation: 0,

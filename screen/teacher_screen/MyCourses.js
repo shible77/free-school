@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, Pressable, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Pressable, TextInput, StatusBar } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
 import CourseModal from '../../components/CourseModal';
@@ -85,6 +85,7 @@ const MyCourses = () => {
   }
   return (
     <View style={styles.mainPage}>
+      <StatusBar hidden={false}/>
       <View>
         {isModalVisible ? <CourseModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} addCourse={addCourse}
           setCourseName={setCourseName} setCourseDescription={setCourseDescription} /> : null}
@@ -142,11 +143,11 @@ export default MyCourses
 const styles = StyleSheet.create({
   mainPage: {
     flex: 1,
-    marginTop: 80,
+    // marginTop: 40,
     flexDirection: 'column'
   },
   heading: {
-    marginTop: 50,
+    marginTop: 100,
     width: '90%',
     alignSelf: 'center',
     display: 'flex',

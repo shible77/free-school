@@ -101,7 +101,7 @@ export default EditCourseDetails
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    marginTop: 120,
+    // marginTop: 120,
     flexDirection: 'column',
     // justifyContent: 'center',
     // alignItems: 'center'
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     display: 'flex',
     flexDirection: 'row',
-    marginTop: 5,
+    marginTop: 100,
     width: '90%',
     justifyContent: 'flex-start'
   },

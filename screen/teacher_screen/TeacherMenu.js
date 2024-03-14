@@ -55,7 +55,7 @@ const Menu = ({ navigation }) => {
               <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop: 5 }}>{' ' + userData.name ? userData.name : userData.email}</Text>
             </View>
           </TouchableOpacity>
-        </ScrollView> : <Text>No Data available</Text>}
+        </ScrollView> : <Text style={{flex : 1}}>No Data available</Text>}
       <View style={styles.buttonView}>
         <ColourfulButton buttonText={'Logout'} color={['aqua', 'deeppink']} press={logoutUser} />
       </View>
@@ -68,21 +68,22 @@ export default Menu
 const styles = StyleSheet.create({
   mainPage: {
     flex: 1,
-    marginVertical: 80,
-    flexDirection: 'column'
+    // marginVertical: 80,
+    flexDirection: 'column',
+    width : '100%',
+    alignSelf : 'center'
   },
   scrollViewContent: {
-    flex: 3,
-    marginVertical: 50,
-    border: '2px solid red'
+    flex : 1,
+    marginVertical: 100,
+    border: '2px solid red',
+    width : '100%'
   },
   buttonView: {
     flex: 1,
     position: 'absolute',
-    top: 700,
-    justifyContent: 'flex-end',
-    width: '66%',
-    left: 35
+    width: '80%',
+    marginTop : 730,
   },
   profile: {
     display: 'flex',

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { StatusBar } from 'react-native';
 import Field from '../components/Field';
 import PasswordField from '../components/PasswordField';
 import ColourfulText from '../components/ColorfulText';
@@ -115,8 +116,9 @@ const Login = (props) => {
   }, [data.confirm_password])
 
   return (
-    <View style={{ flex: 1 }}>{showLoader === true ? <Loader size='large' color='black' /> :
+    <View style={{ flex: 1 }}>{showLoader === true ? <><StatusBar hidden={false} /> <Loader size='large' color='black' /></> :
       (<KeyboardAvoidingWrapper>
+        <StatusBar hidden={false} />
         <View style={styles.container}>
           <View style={styles.innerView}>
             <Image source={require('../assets/logo.png')} style={styles.logo} />

@@ -2,23 +2,24 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ColourfulButton from '../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
-import {firebase} from './../../config'
+import { firebase } from './../../config'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Menu = () => {
 
-  const logoutUser = async() => {
-    await  AsyncStorage.removeItem('user')
+  const logoutUser = async () => {
+    await AsyncStorage.removeItem('user')
     firebase.auth().signOut();
   }
 
   return (
     <View style={styles.mainPage}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
+      <View style={styles.heading}>
         <Ionicons name="menu" size={30} color="black" />
-          <Text style={{fontSize: 25}}>Menu</Text>
-        </View>
+        <Text style={{ fontSize: 25 }}>Menu</Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+
       </ScrollView>
       <View style={styles.buttonView}>
         <ColourfulButton buttonText={'Logout'} color={['aqua', 'deeppink']} press={logoutUser} />
@@ -32,20 +33,22 @@ export default Menu
 const styles = StyleSheet.create({
   mainPage: {
     flex: 1,
-    marginVertical: 80,
     flexDirection: 'column'
+  },
+  heading: {
+    marginTop : 100,
+    width : '90%',
+    alignSelf : 'center'
   },
   scrollViewContent: {
     flex: 3,
-    marginVertical: 50,
+    marginTop: 10,
     border: '2px solid red'
   },
   buttonView: {
     flex: 1,
     position: 'absolute',
-    top: 700,
-    justifyContent: 'flex-end',
-    width: '66%',
-    left: 35
+    width: '80%',
+    marginTop : 730,
   }
 })
