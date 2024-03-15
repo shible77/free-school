@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     display: 'flex',
     flexDirection: 'row',
-    marginTop: 100,
+    marginTop: 130,
     width: '90%',
     justifyContent: 'flex-start'
   },
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   }
   ,
   uploadVideoBtn: {
-    height: 100,
+    height: 70,
     width: '100%',
     alignSelf: 'center',
     borderRadius: 10,

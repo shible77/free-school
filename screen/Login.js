@@ -64,8 +64,9 @@ const Login = (props) => {
     }
 
     return (
+        <>
+        <StatusBar translucent backgroundColor="black" />
         <View style={{ flex: 1 }}>
-            <StatusBar style="auto"/>
             <KeyboardAvoidingWrapper>
                 <View style={styles.container}>
                     <View style={styles.innerView}>
@@ -107,6 +108,7 @@ const Login = (props) => {
                 </View>
             </KeyboardAvoidingWrapper>
         </View>
+        </>
     );
 };
 export default Login;

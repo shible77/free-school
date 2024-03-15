@@ -37,12 +37,12 @@ const EditProfile = () => {
     };
 
 
-    const defaultDivision = { id: null, name: 'Select Division' };
-    const defaultDistrict = { id: null, name: 'Select District' };
-    const defaultUpazila = { id: null, name: 'Select Upazila' };
-    const [selectedDivision, setSelectedDivision] = useState(defaultDivision);
-    const [selectedDistrict, setSelectedDistrict] = useState(defaultDistrict);
-    const [selectedUpazila, setSelectedUpazila] = useState(defaultUpazila);
+    // let defaultDivision = 'Select Division';
+    // let defaultDistrict = 'Select District';
+    // let defaultUpazila = 'Select Upazila';
+    const [selectedDivision, setSelectedDivision] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [selectedUpazila, setSelectedUpazila] = useState(null);
     const [divisions, setDivisions] = useState([])
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
@@ -62,7 +62,7 @@ const EditProfile = () => {
         // Fetch divisions
         const fetchDivisions = async () => {
             try {
-                const response = require('./../../assets/divisions.json');
+                const response =  require('./../../assets/divisions.json');
                 setDivisions(response[2].data);
             } catch (error) {
                 console.error('Error reading divisions.json:', error);
@@ -76,7 +76,9 @@ const EditProfile = () => {
             try {
                 if (selectedDivision) {  // Add a check here
                     const response = require('./../../assets/districts.json');
-                    const requiredDistricts = response[2].data.filter((district) => district.division_id === selectedDivision.id);
+                    const selected_division = divisions.filter((division) => division.name === selectedDivision);
+                    // console.log(selected_division)
+                    const requiredDistricts = response[2].data.filter((district) => district.division_id === selected_division[0].id);
                     setDistricts(requiredDistricts);
                 }
             } catch (err) {
@@ -91,7 +93,8 @@ const EditProfile = () => {
             try {
                 if (selectedDistrict) {  // Add a check here
                     const response = require('./../../assets/upazilas.json');
-                    const requiredUpazilas = response[2].data.filter((upazila) => upazila.district_id === selectedDistrict.id);
+                    const selected_district = districts.filter((district) => district.name === selectedDistrict);
+                    const requiredUpazilas = response[2].data.filter((upazila) => upazila.district_id === selected_district[0].id);
                     setUpazilas(requiredUpazilas);
                 }
             } catch (err) {
@@ -99,28 +102,31 @@ const EditProfile = () => {
             }
         };
         fetchUpazilas();
-    }, [selectedDivision, selectedDistrict]);
+    }, [selectedDistrict]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = () => {
             try {
-                const userDocRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
-                const doc = await userDocRef.get();
-
-                if (doc.exists) {
-                    const userData = doc.data();
-                    setUserData(userData);
-
-                    if (userData.dob) {
-                        const date = new Date(userData.dob.toDate());
-                        setSelectedStartDate(getFormatedDate(date, "YYYY/MM/DD"));
+                return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        setUserData(userData);
+                        setSelectedDivision(userData.division);
+                        setSelectedDistrict(userData.district);
+                        setSelectedUpazila(userData.upazila);
+        
+                        if (userData.dob) {
+                            const date = new Date(userData.dob.toDate());
+                            setSelectedStartDate(getFormatedDate(date, "YYYY/MM/DD"));
+                        }
                     }
-                }
+                }, (error) => {
+                    console.error('Error fetching user data:', error);
+                });
             } catch (err) {
                 console.log(err.message);
             }
-        };
-
+        }; 
         fetchData();
     }, []);
 
@@ -140,9 +146,9 @@ const EditProfile = () => {
             await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
                 name: userData.name,
                 phone: userData.phone,
-                division: selectedDivision.name,
-                district: selectedDistrict.name,
-                upazila: selectedUpazila.name,
+                division: selectedDivision,
+                district: selectedDistrict,
+                upazila: selectedUpazila,
                 dob: timestamp
             }).then(() => {
                 setShowToast(true)
@@ -226,8 +232,12 @@ const EditProfile = () => {
                                         onValueChange={(itemValue) => setSelectedDivision(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[defaultDivision, ...divisions].map((division, index) => (
-                                            <Picker.Item key={index} label={division.name} value={division} />
+                                        {[{name: 'Select Division'},...divisions].map((division, index) => (
+                                            <Picker.Item
+                                                key={index}
+                                                label={division.name}
+                                                value={division.name} 
+                                                enabled={index !== 0} />
                                         ))}
                                     </Picker>
 
@@ -237,11 +247,12 @@ const EditProfile = () => {
                                         onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[defaultDistrict, ...districts].map((district, index) => (
+                                        {[{name: 'Select District'},...districts].map((district, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={district.name}
-                                                value={district}
+                                                value={district.name}
+                                                enabled={index !== 0}
                                             />
                                         ))}
                                     </Picker>
@@ -252,11 +263,12 @@ const EditProfile = () => {
                                         onValueChange={(itemValue) => setSelectedUpazila(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[defaultUpazila, ...upazilas].map((upazila, index) => (
+                                        {[{name: 'Select Upazila'},...upazilas].map((upazila, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={upazila.name}
-                                                value={upazila}
+                                                value={upazila.name}
+                                                enabled={index !== 0}
                                             />
                                         ))}
                                     </Picker>
@@ -294,7 +306,7 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         display: 'flex',
         flexDirection: 'row',
-        marginTop: 100,
+        marginTop: 130,
         width: '90%',
         justifyContent: 'flex-start'
     },

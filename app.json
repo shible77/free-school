@@ -5,9 +5,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "auto",
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png", 
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,15 +22,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.shible77.FreeSchool"
+      "permissions": ["*"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "37c55734-fbda-42ca-b4df-a57ce1aa23f7"
-      }
     },
     "owner": "shible77"
   }

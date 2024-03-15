@@ -7,8 +7,9 @@ import ColourfulButton from '../components/ColorfulButton';
 
 const Home = (props) => {
     return (
+        <>
+        <StatusBar translucent backgroundColor="black" />
         <Background>
-            <StatusBar style="auto"/>
             <View style={styles.container}>
                 <ColourfulText text={'Lets Start'} color={['#3CB371', 'dodgerblue']} style={{ fontSize: 64 }} />
                 <ColourfulText text={'Teaching'} color={['#3CB371', 'dodgerblue']} style={{ fontSize: 50 }} />
@@ -20,6 +21,7 @@ const Home = (props) => {
                 </View>
             </View>
         </Background>
+        </>
     );
 }
 

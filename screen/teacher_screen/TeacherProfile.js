@@ -112,8 +112,8 @@ const TeacherProfile = () => {
             );
 
             const result = response.data;
-            // console.log(result.url)
-            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.url })
+            //  console.log(result.secure_url)
+            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.secure_url})
                 .then(() => {
                     setUploading(false)
                     setModalVisible(false)
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         display: 'flex',
         flexDirection: 'row',
-        marginTop: 100,
+        marginTop: 130,
         width: '90%',
         justifyContent: 'flex-start'
     },

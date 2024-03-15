@@ -85,7 +85,6 @@ const MyCourses = () => {
   }
   return (
     <View style={styles.mainPage}>
-      <StatusBar style="auto"/>
       <View>
         {isModalVisible ? <CourseModal isModalVisible={isModalVisible} setModalVisible={setModalVisible} addCourse={addCourse}
           setCourseName={setCourseName} setCourseDescription={setCourseDescription} /> : null}
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   heading: {
-    marginTop: 100,
+    marginTop: 130,
     width: '90%',
     alignSelf: 'center',
     display: 'flex',

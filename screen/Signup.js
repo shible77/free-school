@@ -116,56 +116,59 @@ const Login = (props) => {
   }, [data.confirm_password])
 
   return (
-    <View style={{ flex: 1 }}>{showLoader === true ? <><StatusBar hidden={false} /> <Loader size='large' color='black' /></> :
-      (<KeyboardAvoidingWrapper>
-        <View style={styles.container}>
-          <StatusBar style="auto" />
-          <View style={styles.innerView}>
-            <Image source={require('../assets/logo.png')} style={styles.logo} />
-            <ColourfulText text={'SIGN UP'} color={['aqua', 'deeppink']} style={{ fontSize: 40 }} />
-            <ColourfulText text={'Create your account here'} color={['aqua', 'deeppink']} style={{ fontSize: 15 }} />
-            <Field placeholder="Email" autoCapitalize="none" icon={<Feather name="mail" size={30} color="skyblue" />}
-              keyboardType={'email-address'}
-              value={data.email}
-              onChangeText={(text) => setData({ ...data, email: text })} />
-            {emailExists && <ShowMessage message="This email is already in use." icon={<MaterialIcons name="error-outline" size={13} color="red" />} color='red' />}
-            <PasswordField placeholder="Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
-              secureTextEntry={showPass1} showPass={showPass1} togglePass={togglePass1}
-              value={data.password}
-              onChangeText={(text) => setData({ ...data, password: text })} />
-            {perfectPass && <ShowMessage message="Password must be at least 6 characters long" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
-            <PasswordField placeholder="Confirm Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
-              secureTextEntry={showPass2} showPass={showPass2} togglePass={togglePass2}
-              value={data.confirm_password}
-              onChangeText={(text) => setData({ ...data, confirm_password: text })} />
-            {passMatched && <ShowMessage message="Both passwords didn't match" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Signup as: </Text>
-              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'teacher' })}>
-                <Radio selected={data.type === 'teacher'} />
-                <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Teacher</Text>
-              </TouchableOpacity>
+    <><StatusBar translucent backgroundColor="black" />
 
-              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'student' })}>
-                <Radio selected={data.type === 'student'} />
-                <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Student</Text>
-              </TouchableOpacity>
-            </View>
-            {selectType && <ShowAlert message="You can't leave any field empty" icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white" positionStyle={{ position: 'absolute', top: 560, left: 40.5, right: 0 }} />}
-            <View style={styles.innerView2}>
-              <ColourfulButton buttonText={'Signup'} color={['aqua', 'deeppink']} press={registerUser} style={{ width: '66%', marginRight: 62 }} />
-            </View>
+      <View style={{ flex: 1 }}>{showLoader === true ? <Loader size='large' color='black' /> :
+        (<KeyboardAvoidingWrapper>
+          <View style={styles.container}>
+            <StatusBar style="auto" />
+            <View style={styles.innerView}>
+              <Image source={require('../assets/logo.png')} style={styles.logo} />
+              <ColourfulText text={'SIGN UP'} color={['aqua', 'deeppink']} style={{ fontSize: 40 }} />
+              <ColourfulText text={'Create your account here'} color={['aqua', 'deeppink']} style={{ fontSize: 15 }} />
+              <Field placeholder="Email" autoCapitalize="none" icon={<Feather name="mail" size={30} color="skyblue" />}
+                keyboardType={'email-address'}
+                value={data.email}
+                onChangeText={(text) => setData({ ...data, email: text })} />
+              {emailExists && <ShowMessage message="This email is already in use." icon={<MaterialIcons name="error-outline" size={13} color="red" />} color='red' />}
+              <PasswordField placeholder="Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
+                secureTextEntry={showPass1} showPass={showPass1} togglePass={togglePass1}
+                value={data.password}
+                onChangeText={(text) => setData({ ...data, password: text })} />
+              {perfectPass && <ShowMessage message="Password must be at least 6 characters long" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
+              <PasswordField placeholder="Confirm Password" autoCapitalize="none" icon={<Feather name="lock" size={29} color="skyblue" />}
+                secureTextEntry={showPass2} showPass={showPass2} togglePass={togglePass2}
+                value={data.confirm_password}
+                onChangeText={(text) => setData({ ...data, confirm_password: text })} />
+              {passMatched && <ShowMessage message="Both passwords didn't match" icon={<MaterialIcons name="error-outline" size={13} color="red" />} color="red" />}
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Signup as: </Text>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'teacher' })}>
+                  <Radio selected={data.type === 'teacher'} />
+                  <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Teacher</Text>
+                </TouchableOpacity>
 
-            <View style={styles.innerView3}>
-              <Text style={styles.text5}>Already have an account? </Text>
-              <TouchableOpacity onPress={() => props.navigation.navigate("Login")}>
-                <Text style={[styles.text6, { color: 'skyblue' }]}>Login</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setData({ ...data, type: 'student' })}>
+                  <Radio selected={data.type === 'student'} />
+                  <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'skyblue' }}>Student</Text>
+                </TouchableOpacity>
+              </View>
+              {selectType && <ShowAlert message="You can't leave any field empty" icon={<MaterialIcons name="error-outline" size={18} color="white" />} color="white" positionStyle={{ position: 'absolute', top: 560, left: 40.5, right: 0 }} />}
+              <View style={styles.innerView2}>
+                <ColourfulButton buttonText={'Signup'} color={['aqua', 'deeppink']} press={registerUser} style={{ width: '66%', marginRight: 62 }} />
+              </View>
+
+              <View style={styles.innerView3}>
+                <Text style={styles.text5}>Already have an account? </Text>
+                <TouchableOpacity onPress={() => props.navigation.navigate("Login")}>
+                  <Text style={[styles.text6, { color: 'skyblue' }]}>Login</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </KeyboardAvoidingWrapper>
-      )}</View>
+        </KeyboardAvoidingWrapper>
+        )}</View>
+    </>
   );
 };
 

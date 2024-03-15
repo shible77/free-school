@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flex : 1,
-    marginVertical: 100,
+    marginVertical: 130,
     border: '2px solid red',
     width : '100%'
   },
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     width: '80%',
-    marginTop : 730,
+    marginTop : 780,
   },
   profile: {
     display: 'flex',

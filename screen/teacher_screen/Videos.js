@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     display: 'flex',
     flexDirection: 'row',
-    marginTop: 100,
+    marginTop: 130,
     width: '90%',
     justifyContent: 'flex-start'
   },
