@@ -31,11 +31,12 @@ const Videos = ({ route }) => {
   const [isMute, setIsMute] = useState(false)
   const refVideo2 = useRef(null)
   const [videos, setVideos] = useState([]);
+  const [courseTitle, setCourseTitle] = useState("");
   const refScrollView = useRef(null)
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
-  useEffect(() => {
+  const fetchVideos = () => {
     const unsubscribe = firebase
       .firestore()
       .collection('Videos')
@@ -48,9 +49,25 @@ const Videos = ({ route }) => {
         setVideos(videoData);
       });
 
-    return unsubscribe; // Cleanup function to unsubscribe from snapshot listener
-  }, [courseId]);
+    return unsubscribe;
+  }
 
+  const fetchCourseInfo = () => {
+    const unsubscribe = firebase
+      .firestore()
+      .collection('courses')
+      .doc(courseId)
+      .onSnapshot((doc) => {
+        setCourseTitle(doc.data().title);
+      });
+
+    return unsubscribe;
+  }
+
+  useEffect(() => {
+    fetchVideos();
+    fetchCourseInfo();
+  }, [courseId]);
 
 
 
@@ -126,6 +143,7 @@ const Videos = ({ route }) => {
       })
       .then(() => {
         // console.log("Document updated with fileId");
+        setVideoTitle('');
       })
       .catch((error) => {
         console.error("Error saving document:", error);
@@ -142,6 +160,17 @@ const Videos = ({ route }) => {
 
   const renderVideoItem = ({ item }) => (
     <View style={styles.videoContainer}>
+      <View style={styles.videoHeading}>
+        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+          <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{courseTitle}</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+          <TouchableOpacity onPress={() => {alert('pressed')}}>
+            <Entypo name="dots-three-vertical" size={20} color="black" />
+          </TouchableOpacity>
+        </View>
+
+      </View>
       <VideoPlayer
         videoProps={{
           shouldPlay: false,
@@ -152,9 +181,9 @@ const Videos = ({ route }) => {
           ref: refVideo2,
         }}
 
-        icon={{
-          play: <AntDesign name="playcircleo" size={35} color="white" />,
+        icon={{   
           pause: <AntDesign name="pausecircleo" size={35} color="white" />,
+          play: <AntDesign name="playcircleo" size={35} color="white" />,
         }}
 
         mute={{
@@ -236,7 +265,7 @@ const Videos = ({ route }) => {
         pageSize={5}
         currentPage={page}
         onPageChange={setPage}
-        btnStyle= {{ backgroundColor: 'black', borderRadius : 10 }}
+        btnStyle={{ backgroundColor: 'black', borderRadius: 10 }}
         activeBtnStyle={{ backgroundColor: 'dimgray' }}
       /></View>}
 
@@ -301,6 +330,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
   },
+  videoHeading: {
+    height: 25,
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'row',
+  }
+  ,
   videoTitle: {
     fontSize: 17,
     marginTop: 10
@@ -310,7 +346,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: 15,
-    height : 550
+    height: 550
   },
   likeCommentContainer: {
     height: 40,
@@ -335,9 +371,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   PaginationContainer: {
-    position : 'absolute',
-    alignSelf : 'center',
-    bottom : 0,
-    width : '100%'
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 0,
+    width: '100%'
   }
 })
