@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, Platform, FlatList, Dimensions, useWindowDimensions } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -8,9 +8,14 @@ import { AntDesign } from '@expo/vector-icons';
 import { Uploading } from "../../components/Uploading";
 import * as ImagePicker from "expo-image-picker";
 import ToastNotification from '../../components/Toast';
-import { Video } from "expo-av";
+import { ResizeMode } from "expo-av";
+import VideoPlayer from 'expo-video-player'
 import { UploadingAndroid } from "../../components/UploadingAndroid";
 import VideoUploadModal from './../../components/VideoUploadModal'
+import Pagination from '@cherry-soft/react-native-basic-pagination';
+import { Entypo } from '@expo/vector-icons';
+import { setStatusBarHidden } from 'expo-status-bar'
+import * as ScreenOrientation from 'expo-screen-orientation'
 import { firebase } from '../../config'
 
 const Videos = ({ route }) => {
@@ -21,6 +26,32 @@ const Videos = ({ route }) => {
   const [showToast, setShowToast] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [videoTitle, setVideoTitle] = useState('')
+  const [page, setPage] = useState(1);
+  const [inFullscreen2, setInFullscreen2] = useState(false)
+  const [isMute, setIsMute] = useState(false)
+  const refVideo2 = useRef(null)
+  const [videos, setVideos] = useState([]);
+  const refScrollView = useRef(null)
+
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
+  useEffect(() => {
+    const unsubscribe = firebase
+      .firestore()
+      .collection('Videos')
+      .where('course_id', '==', courseId)
+      .onSnapshot((querySnapshot) => {
+        const videoData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setVideos(videoData);
+      });
+
+    return unsubscribe; // Cleanup function to unsubscribe from snapshot listener
+  }, [courseId]);
+
+
 
 
   async function pickVideo() {
@@ -86,7 +117,7 @@ const Videos = ({ route }) => {
     await firebase.firestore().collection("Videos").add({
       course_id: courseId,
       teacher_id: user_id,
-      video_title : videoTitle,
+      video_title: videoTitle,
       video: url,
       uploadedAt: createdAt,
     })
@@ -101,6 +132,70 @@ const Videos = ({ route }) => {
       });
   }
 
+  const handleLike = (videoId) => {
+    console.log(`Liked video with ID: ${videoId}`);
+  };
+
+  const handleComment = (videoId) => {
+    console.log(`Commented on video with ID: ${videoId}`);
+  };
+
+  const renderVideoItem = ({ item }) => (
+    <View style={styles.videoContainer}>
+      <VideoPlayer
+        videoProps={{
+          shouldPlay: false,
+          resizeMode: ResizeMode.CONTAIN,
+          source: {
+            uri: item.video,
+          },
+          ref: refVideo2,
+        }}
+
+        icon={{
+          play: <AntDesign name="playcircleo" size={35} color="white" />,
+          pause: <AntDesign name="pausecircleo" size={35} color="white" />,
+        }}
+
+        mute={{
+          enterMute: () => setIsMute(!isMute),
+          exitMute: () => setIsMute(!isMute),
+          isMute,
+        }}
+
+        fullscreen={{
+          inFullscreen: inFullscreen2,
+          enterFullscreen: async () => {
+            setStatusBarHidden(true, 'fade')
+            setInFullscreen2(!inFullscreen2)
+            //  await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT)
+            refVideo2.current.setStatusAsync({
+              shouldPlay: true,
+            })
+          },
+          exitFullscreen: async () => {
+            setStatusBarHidden(false, 'fade')
+            setInFullscreen2(!inFullscreen2)
+            // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT)
+          },
+        }}
+        style={{
+          videoBackgroundColor: 'black',
+          height: inFullscreen2 ? screenWidth : 260,
+          width: inFullscreen2 ? screenHeight : 350,
+        }}
+      />
+      <Text style={styles.videoTitle}>{item.video_title}</Text>
+      <View style={styles.likeCommentContainer}>
+        <TouchableOpacity onPress={() => handleLike(item.id)} style={styles.likeBtn}>
+          <AntDesign name="like2" size={30} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleComment(item.id)} style={styles.commentBtn}>
+          <FontAwesome5 name="comment" size={30} color="black" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.mainContainer}>
@@ -118,13 +213,33 @@ const Videos = ({ route }) => {
           <Octicons name="video" size={30} color="black" />
           <Text style={{ fontSize: 25 }}> Videos</Text>
         </View>
-        <TouchableOpacity onPress={()=> {setIsModalVisible(true)}}>
+        <TouchableOpacity onPress={() => { setIsModalVisible(true) }}>
           <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
             <Feather name="upload" size={24} color="black" />
             <Text style={{ fontSize: 16, marginVertical: 2 }}>UPLOAD</Text>
           </View>
         </TouchableOpacity>
       </View>
+      {videos.length == 0 ? <Text style={{ alignSelf: 'center', marginTop: 200, fontSize: 20 }}>No videos <Entypo name="emoji-sad" size={22} color="black" /></Text> : null}
+      <View style={styles.FlatListContainer}>
+        <FlatList
+          data={videos.slice((page - 1) * 5, page * 5)} // Adjust based on pageSize
+          renderItem={renderVideoItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+
+      {videos.length > 5 && <View style={styles.PaginationContainer}><Pagination
+        totalItems={videos.length}
+        pageSize={5}
+        currentPage={page}
+        onPageChange={setPage}
+        btnStyle= {{ backgroundColor: 'black', borderRadius : 10 }}
+        activeBtnStyle={{ backgroundColor: 'dimgray' }}
+      /></View>}
+
       {video &&
         (Platform.OS === "ios" ? (
           <Uploading video={video} progress={progress} />
@@ -178,4 +293,51 @@ const styles = StyleSheet.create({
     width: '90%',
     marginTop: 10
   },
+  videoContainer: {
+    borderWidth: 2,
+    padding: 5,
+    width: '100%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  videoTitle: {
+    fontSize: 17,
+    marginTop: 10
+  }
+  ,
+  FlatListContainer: {
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 15,
+    height : 550
+  },
+  likeCommentContainer: {
+    height: 40,
+    display: 'flex',
+    flexDirection: 'row',
+    // borderTopWidth : 1,
+    marginTop: 10
+  },
+  likeBtn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'lightgray',
+    padding: 3,
+    borderRadius: 5
+  },
+  commentBtn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'lightgray',
+    borderRadius: 5,
+  },
+  PaginationContainer: {
+    position : 'absolute',
+    alignSelf : 'center',
+    bottom : 0,
+    width : '100%'
+  }
 })
