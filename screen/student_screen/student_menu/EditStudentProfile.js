@@ -4,12 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { firebase } from '../../config'
-import Loader from '../../components/Loader';
+import { firebase } from '../../../config'
+import Loader from '../../../components/Loader';
 import { Picker } from '@react-native-picker/picker';
 import { getFormatedDate } from "react-native-modern-datepicker";
-import DateModal from '../../components/DateModal';
-import ToastNotification from '../../components/Toast';
+import DateModal from '../../../components/DateModal';
+import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
 
 
@@ -36,10 +36,6 @@ const EditStudentProfile = () => {
         setOpenStartDatePicker(!openStartDatePicker);
     };
 
-
-    // let defaultDivision = 'Select Division';
-    // let defaultDistrict = 'Select District';
-    // let defaultUpazila = 'Select Upazila';
     const [selectedDivision, setSelectedDivision] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedUpazila, setSelectedUpazila] = useState(null);
@@ -51,8 +47,18 @@ const EditStudentProfile = () => {
 
     useEffect(() => {
         // Validate phone number when userData changes
-        if (userData && userData.phone && userData.phone.length !== 11) {
-            setPhoneError('Please enter a valid phone number with 11 digits.');
+        if (userData && userData.phone) {
+            const slicedString = userData.phone.slice(0, 3);
+            if (userData.phone.length == 11 && (slicedString == '011'
+            || slicedString == '013' || slicedString == '014'
+            || slicedString == '015' || slicedString == '016'
+            || slicedString == '017' || slicedString == '018'
+            || slicedString == '019')) {
+                setPhoneError('');
+            }
+            else{
+                setPhoneError('Mobile Number is invalid');
+            } 
         } else {
             setPhoneError('');
         }
@@ -62,7 +68,7 @@ const EditStudentProfile = () => {
         // Fetch divisions
         const fetchDivisions = async () => {
             try {
-                const response =  require('./../../assets/divisions.json');
+                const response =  require('../../../assets/divisions.json');
                 setDivisions(response[2].data);
             } catch (error) {
                 console.error('Error reading divisions.json:', error);
@@ -75,7 +81,7 @@ const EditStudentProfile = () => {
         const fetchDistricts = async () => {
             try {
                 if (selectedDivision) {  // Add a check here
-                    const response = require('./../../assets/districts.json');
+                    const response = require('../../../assets/districts.json');
                     const selected_division = divisions.filter((division) => division.name === selectedDivision);
                     // console.log(selected_division)
                     const requiredDistricts = response[2].data.filter((district) => district.division_id === selected_division[0].id);
@@ -92,7 +98,7 @@ const EditStudentProfile = () => {
         const fetchUpazilas = async () => {
             try {
                 if (selectedDistrict) {  // Add a check here
-                    const response = require('./../../assets/upazilas.json');
+                    const response = require('../../../assets/upazilas.json');
                     const selected_district = districts.filter((district) => district.name === selectedDistrict);
                     const requiredUpazilas = response[2].data.filter((upazila) => upazila.district_id === selected_district[0].id);
                     setUpazilas(requiredUpazilas);

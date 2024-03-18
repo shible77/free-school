@@ -51,8 +51,18 @@ const EditProfile = () => {
 
     useEffect(() => {
         // Validate phone number when userData changes
-        if (userData && userData.phone && userData.phone.length !== 11) {
-            setPhoneError('Please enter a valid phone number with 11 digits.');
+        if (userData && userData.phone) {
+            const slicedString = userData.phone.slice(0, 3);
+            if (userData.phone.length == 11 && (slicedString == '011'
+            || slicedString == '013' || slicedString == '014'
+            || slicedString == '015' || slicedString == '016'
+            || slicedString == '017' || slicedString == '018'
+            || slicedString == '019')) {
+                setPhoneError('');
+            }
+            else{
+                setPhoneError('Mobile Number is invalid');
+            } 
         } else {
             setPhoneError('');
         }
@@ -62,7 +72,7 @@ const EditProfile = () => {
         // Fetch divisions
         const fetchDivisions = async () => {
             try {
-                const response =  require('./../../assets/divisions.json');
+                const response = require('./../../assets/divisions.json');
                 setDivisions(response[2].data);
             } catch (error) {
                 console.error('Error reading divisions.json:', error);
@@ -114,7 +124,7 @@ const EditProfile = () => {
                         setSelectedDivision(userData.division);
                         setSelectedDistrict(userData.district);
                         setSelectedUpazila(userData.upazila);
-        
+
                         if (userData.dob) {
                             const date = new Date(userData.dob.toDate());
                             setSelectedStartDate(getFormatedDate(date, "YYYY/MM/DD"));
@@ -126,7 +136,7 @@ const EditProfile = () => {
             } catch (err) {
                 console.log(err.message);
             }
-        }; 
+        };
         fetchData();
     }, []);
 
@@ -232,11 +242,11 @@ const EditProfile = () => {
                                         onValueChange={(itemValue) => setSelectedDivision(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[{name: 'Select Division'},...divisions].map((division, index) => (
+                                        {[{ name: 'Select Division' }, ...divisions].map((division, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={division.name}
-                                                value={division.name} 
+                                                value={division.name}
                                                 enabled={index !== 0} />
                                         ))}
                                     </Picker>
@@ -247,7 +257,7 @@ const EditProfile = () => {
                                         onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[{name: 'Select District'},...districts].map((district, index) => (
+                                        {[{ name: 'Select District' }, ...districts].map((district, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={district.name}
@@ -263,7 +273,7 @@ const EditProfile = () => {
                                         onValueChange={(itemValue) => setSelectedUpazila(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[{name: 'Select Upazila'},...upazilas].map((upazila, index) => (
+                                        {[{ name: 'Select Upazila' }, ...upazilas].map((upazila, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={upazila.name}

@@ -5,8 +5,8 @@ import { Octicons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
-import Videos from './student_screen/StudentVideos';
-import Courses from './student_screen/StudentCourses';
+import StudentVideos from './student_screen/student_videos/StudentVideos';
+import StudentCourses from './student_screen/student_courses/StudentCourses';
 import Loader from './../components/Loader'
 import { firebase } from '../config'
 import MyVideos from './teacher_screen/MyVideos';
@@ -14,8 +14,8 @@ import MyQuizzes from './teacher_screen/MyQuizzes';
 import MenuNavigation from './teacher_screen/MenuNavigation';
 import CoursesNavigation from './teacher_screen/CoursesNavigation';
 import { StatusBar } from 'react-native';
-import StudentMenuNavigation from './student_screen/StudentMenuNavigation'
-import StudentQuizzes from './student_screen/StudentQuizzes';
+import StudentMenuNavigation from './student_screen/student_menu/StudentMenuNavigation'
+import StudentQuizzes from './student_screen/student_quizzes/StudentQuizzes';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -50,19 +50,20 @@ const DashBoard = () => {
               tabBarIndicatorStyle: { opacity: 0 },
               tabBarStyle: {
                 position: 'absolute',
-                top: 40,
-                left: 10,
-                right: 10,
+                top: 45,
+                left: 8,
+                right: 8,
                 elevation: 0,
-                backgroundColor: '#ffffff',
+                // backgroundColor: '#ffffff',
+                backgroundColor : 'gainsboro',
                 borderRadius: 15,
                 height: 80,
               },
             }}
           >
             <Tab.Screen
-              name="Courses"
-              component={Courses}
+              name="StudentCourses"
+              component={StudentCourses}
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
@@ -75,8 +76,8 @@ const DashBoard = () => {
               }}
             />
             <Tab.Screen
-              name="Videos"
-              component={Videos}
+              name="StudentVideos"
+              component={StudentVideos}
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
@@ -131,11 +132,11 @@ const DashBoard = () => {
               tabBarIndicatorStyle: { opacity: 0 },
               tabBarStyle: {
                 position: 'absolute',
-                top: 40,
-                left: 10,
-                right: 10,
+                top: 45,
+                left: 8,
+                right: 8,
                 elevation: 0,
-                backgroundColor: '#ffffff',
+                backgroundColor: 'gainsboro',
                 borderRadius: 15,
                 height: 80,
               },

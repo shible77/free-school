@@ -90,12 +90,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // borderWidth : 1,
     // borderColor : 'black',
-    borderRadius: 10,
+    borderRadius: 15,
     width: '90%',
     padding: 10,
     alignSelf: 'center',
     marginTop: 10,
-    backgroundColor: 'white'
+    backgroundColor: 'darkgray'
   },
   image: {
     width: 40,

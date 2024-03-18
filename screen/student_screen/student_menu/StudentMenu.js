@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import ColourfulButton from '../../components/ColorfulButton'
+import ColourfulButton from '../../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { firebase } from './../../config';
+import { firebase } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StudentMenu = ({ navigation }) => {
@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // borderWidth : 1,
     // borderColor : 'black',
-    borderRadius: 10,
+    borderRadius: 15,
     width: '90%',
     padding: 10,
     alignSelf: 'center',
     marginTop: 10,
-    backgroundColor: 'white'
+    backgroundColor: 'darkgray'
   },
   image: {
     width: 40,
