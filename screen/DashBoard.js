@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Entypo } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
 import Videos from './student_screen/StudentVideos';
 import Courses from './student_screen/StudentCourses';
-import Menu from './student_screen/StudentMenu';
 import Loader from './../components/Loader'
 import { firebase } from '../config'
 import MyVideos from './teacher_screen/MyVideos';
@@ -17,6 +15,7 @@ import MenuNavigation from './teacher_screen/MenuNavigation';
 import CoursesNavigation from './teacher_screen/CoursesNavigation';
 import { StatusBar } from 'react-native';
 import StudentMenuNavigation from './student_screen/StudentMenuNavigation'
+import StudentQuizzes from './student_screen/StudentQuizzes';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -67,7 +66,7 @@ const DashBoard = () => {
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Entypo name="open-book" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Feather name="book-open" size={22}style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
@@ -89,7 +88,20 @@ const DashBoard = () => {
                 ),
               }}
             />
-
+            <Tab.Screen
+              name="StudentQuizzes"
+              component={StudentQuizzes}
+              options={{
+                tabBarIcon: ({ focused }) => (
+                  <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
+                    <MaterialCommunityIcons name="message-question-outline" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                  </View>
+                ),
+                tabBarLabel: ({ focused }) => (
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>QUIZZES</Text>
+                ),
+              }}
+            />
             <Tab.Screen
               name="StudentMenuNavigation"
               component={StudentMenuNavigation}
@@ -149,7 +161,7 @@ const DashBoard = () => {
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <MaterialIcons name="video-collection" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Octicons name="video" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
 
                   </View>
                 ),

@@ -4,10 +4,10 @@
     "slug": "Free-School",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/playstore.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/mySplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,14 +19,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/playstore.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["*"]
+      "permissions": [
+        "*"
+      ],
+      "package": "com.shible77.FreeSchool"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "owner": "shible77"
+    "owner": "shible77",
+    "extra": {
+      "eas": {
+        "projectId": "dac7ced4-264b-4d18-9bb1-40ecca5d0b58"
+      }
+    }
   }
 }
