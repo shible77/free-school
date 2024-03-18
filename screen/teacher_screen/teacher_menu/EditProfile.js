@@ -4,12 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { firebase } from '../../config'
-import Loader from '../../components/Loader';
+import { firebase } from '../../../config'
+import Loader from '../../../components/Loader';
 import { Picker } from '@react-native-picker/picker';
 import { getFormatedDate } from "react-native-modern-datepicker";
-import DateModal from '../../components/DateModal';
-import ToastNotification from '../../components/Toast';
+import DateModal from '../../../components/DateModal';
+import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
 
 
@@ -72,7 +72,7 @@ const EditProfile = () => {
         // Fetch divisions
         const fetchDivisions = async () => {
             try {
-                const response = require('./../../assets/divisions.json');
+                const response = require('../../../assets/divisions.json');
                 setDivisions(response[2].data);
             } catch (error) {
                 console.error('Error reading divisions.json:', error);
@@ -85,7 +85,7 @@ const EditProfile = () => {
         const fetchDistricts = async () => {
             try {
                 if (selectedDivision) {  // Add a check here
-                    const response = require('./../../assets/districts.json');
+                    const response = require('../../../assets/districts.json');
                     const selected_division = divisions.filter((division) => division.name === selectedDivision);
                     // console.log(selected_division)
                     const requiredDistricts = response[2].data.filter((district) => district.division_id === selected_division[0].id);
@@ -102,7 +102,7 @@ const EditProfile = () => {
         const fetchUpazilas = async () => {
             try {
                 if (selectedDistrict) {  // Add a check here
-                    const response = require('./../../assets/upazilas.json');
+                    const response = require('../../../assets/upazilas.json');
                     const selected_district = districts.filter((district) => district.name === selectedDistrict);
                     const requiredUpazilas = response[2].data.filter((upazila) => upazila.district_id === selected_district[0].id);
                     setUpazilas(requiredUpazilas);

@@ -9,10 +9,10 @@ import StudentVideos from './student_screen/student_videos/StudentVideos';
 import StudentCourses from './student_screen/student_courses/StudentCourses';
 import Loader from './../components/Loader'
 import { firebase } from '../config'
-import MyVideos from './teacher_screen/MyVideos';
-import MyQuizzes from './teacher_screen/MyQuizzes';
-import MenuNavigation from './teacher_screen/MenuNavigation';
-import CoursesNavigation from './teacher_screen/CoursesNavigation';
+import MyVideos from './teacher_screen/teacher_videos/MyVideos';
+import MyQuizzes from './teacher_screen/teacher_quizzes/MyQuizzes';
+import MenuNavigation from './teacher_screen/teacher_menu/MenuNavigation';
+import CoursesNavigation from './teacher_screen/teacher_courses/CoursesNavigation';
 import { StatusBar } from 'react-native';
 import StudentMenuNavigation from './student_screen/student_menu/StudentMenuNavigation'
 import StudentQuizzes from './student_screen/student_quizzes/StudentQuizzes';

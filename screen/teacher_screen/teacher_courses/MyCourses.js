@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Pressable, TextInput, StatusBar } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Feather } from '@expo/vector-icons';
-import CourseModal from '../../components/CourseModal';
-import { firebase } from './../../config';
+import CourseModal from '../../../components/CourseModal';
+import { firebase } from '../../../config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';

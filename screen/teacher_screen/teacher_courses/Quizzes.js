@@ -6,7 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { firebase } from '../../config'
+import { firebase } from '../../../config'
 
 const Quizzes = ({ route }) => {
   const navigation = useNavigation()

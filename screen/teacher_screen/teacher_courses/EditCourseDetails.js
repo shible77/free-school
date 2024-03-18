@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { firebase } from '../../config'
-import ToastNotification from '../../components/Toast';
+import { firebase } from '../../../config'
+import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
 
 const EditCourseDetails = ({ route }) => {

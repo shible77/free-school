@@ -5,18 +5,18 @@ import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import { Uploading } from "../../components/Uploading";
+import { Uploading } from "../../../components/Uploading";
 import * as ImagePicker from "expo-image-picker";
-import ToastNotification from '../../components/Toast';
+import ToastNotification from '../../../components/Toast';
 import { ResizeMode } from "expo-av";
 import VideoPlayer from 'expo-video-player'
-import { UploadingAndroid } from "../../components/UploadingAndroid";
-import VideoUploadModal from './../../components/VideoUploadModal'
+import { UploadingAndroid } from "../../../components/UploadingAndroid";
+import VideoUploadModal from '../../../components/VideoUploadModal'
 import Pagination from '@cherry-soft/react-native-basic-pagination';
 import { Entypo } from '@expo/vector-icons';
 import { setStatusBarHidden } from 'expo-status-bar'
 import * as ScreenOrientation from 'expo-screen-orientation'
-import { firebase } from '../../config'
+import { firebase } from '../../../config'
 
 const Videos = ({ route }) => {
   const navigation = useNavigation()

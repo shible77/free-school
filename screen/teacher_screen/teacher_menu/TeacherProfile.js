@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react'
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { firebase } from '../../config';
-import Loader from '../../components/Loader';
-import UploadModal from '../../components/UploadModal';
+import { firebase } from '../../../config';
+import Loader from '../../../components/Loader';
+import UploadModal from '../../../components/UploadModal';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
@@ -156,7 +156,7 @@ const TeacherProfile = () => {
                     <View style={styles.profilePic}>
                         <Image
                             style={styles.image}
-                            source={!userData.image ? require('./../../assets/dummyUser.png') : { uri: userData.image }}
+                            source={!userData.image ? require('../../../assets/dummyUser.png') : { uri: userData.image }}
                         />
                         <TouchableOpacity style={styles.uploadBtn} onPress={openModal}>
                             <Text>Change Image</Text>
