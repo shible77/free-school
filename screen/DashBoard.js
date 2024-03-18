@@ -6,9 +6,9 @@ import { Octicons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
-import Videos from './student_screen/Videos';
-import Courses from './student_screen/Courses';
-import Menu from './student_screen/Menu';
+import Videos from './student_screen/StudentVideos';
+import Courses from './student_screen/StudentCourses';
+import Menu from './student_screen/StudentMenu';
 import Loader from './../components/Loader'
 import { firebase } from '../config'
 import MyVideos from './teacher_screen/MyVideos';
@@ -16,6 +16,7 @@ import MyQuizzes from './teacher_screen/MyQuizzes';
 import MenuNavigation from './teacher_screen/MenuNavigation';
 import CoursesNavigation from './teacher_screen/CoursesNavigation';
 import { StatusBar } from 'react-native';
+import StudentMenuNavigation from './student_screen/StudentMenuNavigation'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -50,7 +51,7 @@ const DashBoard = () => {
               tabBarIndicatorStyle: { opacity: 0 },
               tabBarStyle: {
                 position: 'absolute',
-                top: 10,
+                top: 40,
                 left: 10,
                 right: 10,
                 elevation: 0,
@@ -90,8 +91,8 @@ const DashBoard = () => {
             />
 
             <Tab.Screen
-              name="Menu"
-              component={Menu}
+              name="StudentMenuNavigation"
+              component={StudentMenuNavigation}
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>

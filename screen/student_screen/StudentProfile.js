@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import axios from 'axios';
 
-const TeacherProfile = () => {
+const StudentProfile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false)
@@ -143,7 +143,7 @@ const TeacherProfile = () => {
                     <Text style={{ fontSize: 25 }}> Profile</Text>
                 </View>
                 <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-                    <TouchableOpacity onPress={() => { navigation.navigate('EditProfile') }} style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => { navigation.navigate('EditStudentProfile') }} style={{ flexDirection: 'row' }}>
                         <Feather name="edit" size={24} color="black" />
                         <Text style={{ fontSize: 16, marginVertical: 2 }}> EDIT</Text>
                     </TouchableOpacity>
@@ -226,7 +226,7 @@ const TeacherProfile = () => {
     );
 };
 
-export default TeacherProfile;
+export default StudentProfile;
 
 const styles = StyleSheet.create({
     mainContainer: {

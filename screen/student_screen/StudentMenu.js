@@ -6,7 +6,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { firebase } from './../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Menu = ({ navigation }) => {
+const StudentMenu = ({ navigation }) => {
 
   const [userData, setUserData] = useState(null)
 
@@ -29,8 +29,7 @@ const Menu = ({ navigation }) => {
       unsubscribe();
     };
   }, []);
-  
-
+  // console.log(userData)
   const logoutUser = async() => {
     await AsyncStorage.removeItem('user')
     firebase.auth().signOut();
@@ -44,7 +43,7 @@ const Menu = ({ navigation }) => {
             <Ionicons name="menu" size={30} color="black" />
             <Text style={{ fontSize: 25 }}>Menu</Text>
           </View>
-          <TouchableOpacity onPress={() => { navigation.navigate('TeacherProfile') }}>
+          <TouchableOpacity onPress={() => { navigation.navigate('StudentProfile') }}>
             <View style={styles.profile}>
               {userData.image ?
                 <Image
@@ -52,7 +51,9 @@ const Menu = ({ navigation }) => {
                   source={{ uri: userData.image }}
                 /> :
                 <FontAwesome name="user-circle-o" size={40} color="black" />}
-              <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop: 5 }}>{' ' + userData.name ? userData.name : userData.email}</Text>
+              {userData.name ? <Text style={{ fontSize: 21, color: 'black', marginLeft: 10,marginTop : 5}}>{userData.name}</Text> : 
+              <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop : 5}}>{userData.email}</Text>
+              }
             </View>
           </TouchableOpacity>
         </ScrollView> : <Text style={{flex : 1}}>No Data available</Text>}
@@ -63,7 +64,7 @@ const Menu = ({ navigation }) => {
   )
 }
 
-export default Menu
+export default StudentMenu
 
 const styles = StyleSheet.create({
   mainPage: {
