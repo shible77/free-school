@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { firebase } from '../../../config'
@@ -216,8 +216,10 @@ const EditStudentProfile = () => {
                                         onChangeText={(text) => setUserData({ ...userData, phone: text })}
                                     />
                                     {phoneError ? (
-                                        <Text style={{ color: 'red' }}>{phoneError}</Text>
-                                    ) : null}
+                                        <View style={{flexDirection : 'row'}}>
+                                            <MaterialIcons name="error-outline" size={17} color="red"/>
+                                            <Text style={{ color: 'red' }}>{phoneError}</Text>
+                                        </View>) : null}
                                 </View>
                                 <View style={styles.inputField}>
                                     <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
