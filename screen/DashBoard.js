@@ -16,6 +16,7 @@ import CoursesNavigation from './teacher_screen/teacher_courses/CoursesNavigatio
 import { StatusBar } from 'react-native';
 import StudentMenuNavigation from './student_screen/student_menu/StudentMenuNavigation'
 import StudentQuizzes from './student_screen/student_quizzes/StudentQuizzes';
+import ActivityIndicator from '../components/ActivityIndicator'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -30,8 +31,10 @@ const DashBoard = () => {
         setLoading(true)
         const userSnapshot = await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get();
         const userData = userSnapshot.data();
-        setUserType(userData.type);
-        setLoading(false)
+        setTimeout(() => {
+          setUserType(userData.type);
+          setLoading(false)
+        }, 3000)    
       } catch (err) {
         console.log(err.message);
       }
@@ -55,7 +58,7 @@ const DashBoard = () => {
                 right: 8,
                 elevation: 0,
                 // backgroundColor: '#ffffff',
-                backgroundColor : 'gainsboro',
+                backgroundColor: 'gainsboro',
                 borderRadius: 15,
                 height: 80,
               },
@@ -67,7 +70,7 @@ const DashBoard = () => {
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Feather name="book-open" size={22}style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
@@ -124,7 +127,7 @@ const DashBoard = () => {
   else if (userType === 'teacher') {
     return (
       <>
-      <StatusBar translucent backgroundColor="black" />
+        <StatusBar translucent backgroundColor="black" />
         <View style={{ flex: 1, backgroundColor: 'white' }}>
           <Tab.Navigator
             screenOptions={{
@@ -206,9 +209,10 @@ const DashBoard = () => {
   }
   else {
     return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <Loader size='large' color='black' />
-      </View>
+      <>
+        <StatusBar translucent backgroundColor="black" />
+        {loading && <ActivityIndicator />}
+      </>
     )
   }
 }

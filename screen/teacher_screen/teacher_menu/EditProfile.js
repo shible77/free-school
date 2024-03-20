@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { firebase } from '../../../config'
@@ -54,15 +54,15 @@ const EditProfile = () => {
         if (userData && userData.phone) {
             const slicedString = userData.phone.slice(0, 3);
             if (userData.phone.length == 11 && (slicedString == '011'
-            || slicedString == '013' || slicedString == '014'
-            || slicedString == '015' || slicedString == '016'
-            || slicedString == '017' || slicedString == '018'
-            || slicedString == '019')) {
+                || slicedString == '013' || slicedString == '014'
+                || slicedString == '015' || slicedString == '016'
+                || slicedString == '017' || slicedString == '018'
+                || slicedString == '019')) {
                 setPhoneError('');
             }
-            else{
+            else {
                 setPhoneError('Mobile Number is invalid');
-            } 
+            }
         } else {
             setPhoneError('');
         }
@@ -215,13 +215,15 @@ const EditProfile = () => {
                                         style={styles.input}
                                         placeholderTextColor={'dimgray'}
                                         cursorColor={'black'}
-                                        keyboardType='phone-pad'
+                                        keyboardType='number-pad'
                                         value={userData.phone}
                                         onChangeText={(text) => setUserData({ ...userData, phone: text })}
                                     />
                                     {phoneError ? (
-                                        <Text style={{ color: 'red' }}>{phoneError}</Text>
-                                    ) : null}
+                                        <View style={{flexDirection : 'row'}}>
+                                            <MaterialIcons name="error-outline" size={17} color="red"/>
+                                            <Text style={{ color: 'red' }}>{phoneError}</Text>
+                                        </View>) : null}
                                 </View>
                                 <View style={styles.inputField}>
                                     <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
