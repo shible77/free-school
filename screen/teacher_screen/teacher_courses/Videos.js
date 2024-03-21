@@ -150,12 +150,21 @@ const Videos = ({ route }) => {
       });
   }
 
-  const handleLike = (videoId) => {
-    console.log(`Liked video with ID: ${videoId}`);
-  };
+  const handleLike = async (video) => {
+    const userLiked = video.likes ? video.likes.includes(firebase.auth().currentUser.uid) : false;
+    const videoRef = firebase.firestore().collection('Videos').doc(video.video_id);
+    try {
+      await videoRef.update({
+        likeCount : video.likeCount <=0 ? 1 : userLiked ? firebase.firestore.FieldValue.increment(-1) : firebase.firestore.FieldValue.increment(1),
+        likes: userLiked ? firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.uid) : firebase.firestore.FieldValue.arrayUnion(firebase.auth().currentUser.uid)
+      });
+    } catch (error) {
+      console.error('Error updating likes: ', error);
+    }
+  }
 
-  const handleComment = (videoId) => {
-    console.log(`Commented on video with ID: ${videoId}`);
+  const handleComment = (video) => {
+    console.log(`Commented on video with ID: ${video}`);
   };
 
   const renderVideoItem = ({ item }) => (
@@ -165,7 +174,7 @@ const Videos = ({ route }) => {
           <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{courseTitle}</Text>
         </View>
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
-          <TouchableOpacity onPress={() => {alert('pressed')}}>
+          <TouchableOpacity onPress={() => { alert('pressed') }}>
             <Entypo name="dots-three-vertical" size={20} color="black" />
           </TouchableOpacity>
         </View>
@@ -181,7 +190,7 @@ const Videos = ({ route }) => {
           ref: refVideo2,
         }}
 
-        icon={{   
+        icon={{
           pause: <AntDesign name="pausecircleo" size={35} color="white" />,
           play: <AntDesign name="playcircleo" size={35} color="white" />,
         }}
@@ -215,11 +224,19 @@ const Videos = ({ route }) => {
         }}
       />
       <Text style={styles.videoTitle}>{item.video_title}</Text>
+      <View style={styles.likeCmntCounter}>
+          <View style={{flex: 1,justifyContent : 'flex-start', alignItems : 'flex-start'}}>
+            <Text style={{fontSize : 16}}>Likes : {!item.likeCount ? 0 : item.likeCount}</Text>
+          </View>
+          <View style={{flex: 1, justifyContent : 'flex-end', alignItems : 'flex-end'}}>
+            <Text style={{fontSize : 16}}>Comments : 0 </Text>
+          </View>
+      </View>
       <View style={styles.likeCommentContainer}>
-        <TouchableOpacity onPress={() => handleLike(item.id)} style={styles.likeBtn}>
-          <AntDesign name="like2" size={30} color="black" />
+        <TouchableOpacity onPress={() => handleLike(item)} style={styles.likeBtn}>
+          { (item.likes && item.likes.includes(firebase.auth().currentUser.uid)) ? <AntDesign name="like1" size={30} color="dodgerblue" /> : <AntDesign name="like2" size={30} color="black" />}
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleComment(item.id)} style={styles.commentBtn}>
+        <TouchableOpacity onPress={() => handleComment(item)} style={styles.commentBtn}>
           <FontAwesome5 name="comment" size={30} color="black" />
         </TouchableOpacity>
       </View>
@@ -339,7 +356,8 @@ const styles = StyleSheet.create({
   ,
   videoTitle: {
     fontSize: 17,
-    marginTop: 10
+    marginTop: 10,
+    fontWeight : 'bold'
   }
   ,
   FlatListContainer: {
@@ -353,8 +371,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     // borderTopWidth : 1,
-    marginTop: 10
+    marginTop: 5
   },
+  likeCmntCounter : {
+    display : 'flex',
+    marginTop : 10,
+    width : '100%',
+    height : 20,
+    flexDirection : 'row',
+  }
+  ,
   likeBtn: {
     flex: 1,
     justifyContent: 'center',
