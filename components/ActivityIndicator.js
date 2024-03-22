@@ -7,26 +7,23 @@ const ActivityIndicator = () => {
   const tl = useRef();
 
   useEffect(() => {
-    // Define a function to handle animation
-    const animate = () => {
+ 
+   const animate = () => {
       AutoKillTweens.tweensOf(tl.current);
       tl.current = gsap.timeline();
       tl.current.to(circles.current, { duration: 0.5, transform: { y: -30, scale: 0.8 }, ease: Power2.easeInOut, stagger: { amount: 0.3 } });
       tl.current.to(circles.current, { duration: 1, transform: { y: 0, scale: 1 }, ease: Elastic.easeOut, stagger: { amount: 0.3 } });
     };
 
-    // Call the animation function initially
     animate();
 
-    // Set interval to trigger animation periodically
-    const intervalId = setInterval(animate, 1500);
+    const intervalId = setInterval(animate, 2000);
 
-    // Cleanup function to clear interval on component unmount
     return () => {
       clearInterval(intervalId);
-      // Ensure that animation completes before unmounting
+    
       if (tl.current) {
-        tl.current.kill(); // Stop any ongoing animation
+        tl.current.kill(); 
       }
     };
   }, []);

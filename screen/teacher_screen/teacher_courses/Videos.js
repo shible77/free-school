@@ -17,6 +17,7 @@ import { Entypo } from '@expo/vector-icons';
 import { setStatusBarHidden } from 'expo-status-bar'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { firebase } from '../../../config'
+import CommentModal from '../../../components/CommentModal';
 
 const Videos = ({ route }) => {
   const navigation = useNavigation()
@@ -33,8 +34,31 @@ const Videos = ({ route }) => {
   const [videos, setVideos] = useState([]);
   const [courseTitle, setCourseTitle] = useState("");
   const refScrollView = useRef(null)
+  const [currentUserInfo, setCurrentUserInfo] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentModal, setCommentModal] = useState(false);
+  const [userComment, setUserComment] = useState('');
+  const [trackVideo, setTrackVideo] = useState('');
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
+  useEffect(() => {
+    const fetchCurrentUserInfo = async () => {
+      try {
+        const doc = await firebase
+          .firestore()
+          .collection('users')
+          .doc(firebase.auth().currentUser.uid)
+          .get();
+
+        setCurrentUserInfo(doc.data());
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+    fetchCurrentUserInfo();
+  }, []);
+
 
   const fetchVideos = () => {
     const unsubscribe = firebase
@@ -155,7 +179,7 @@ const Videos = ({ route }) => {
     const videoRef = firebase.firestore().collection('Videos').doc(video.video_id);
     try {
       await videoRef.update({
-        likeCount : video.likeCount <=0 ? 1 : userLiked ? firebase.firestore.FieldValue.increment(-1) : firebase.firestore.FieldValue.increment(1),
+        likeCount: !video.likeCount ? 1 : userLiked ? firebase.firestore.FieldValue.increment(-1) : firebase.firestore.FieldValue.increment(1),
         likes: userLiked ? firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.uid) : firebase.firestore.FieldValue.arrayUnion(firebase.auth().currentUser.uid)
       });
     } catch (error) {
@@ -164,9 +188,45 @@ const Videos = ({ route }) => {
   }
 
   const handleComment = (video) => {
-    console.log(`Commented on video with ID: ${video}`);
+    setCommentModal(true);
+    setTrackVideo(video);
+    try {
+      const unsubscribe = firebase
+        .firestore()
+        .collection('Videos')
+        .doc(video.video_id)
+        .collection('comments')
+        .orderBy('createdAt', 'asc') 
+        .onSnapshot((querySnapshot) => {
+          const comments = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setComments(comments);
+        });
+      return unsubscribe;
+    } catch (err) {
+      console.error('Error fetching comments:', err);
+    }
   };
-
+  
+  const storeComments = async() => {
+    try {
+      // console.log(trackVideoId)
+      // Add document to subcollection
+      await firebase.firestore().collection('Videos').doc(trackVideo.video_id).collection('comments').add({
+        comment: userComment,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userName: currentUserInfo.name,
+        image: currentUserInfo.image,
+      });
+      setUserComment('')
+      // Increment count field in the video document
+      await firebase.firestore().collection('Videos').doc(trackVideo.video_id).update({
+        commentCount: !trackVideo.commentCount ? 1 : firebase.firestore.FieldValue.increment(1)
+      });
+    } catch (error) {
+      console.error('Error adding document to subcollection:', error);
+    }
+  };
+  
   const renderVideoItem = ({ item }) => (
     <View style={styles.videoContainer}>
       <View style={styles.videoHeading}>
@@ -225,16 +285,16 @@ const Videos = ({ route }) => {
       />
       <Text style={styles.videoTitle}>{item.video_title}</Text>
       <View style={styles.likeCmntCounter}>
-          <View style={{flex: 1,justifyContent : 'flex-start', alignItems : 'flex-start'}}>
-            <Text style={{fontSize : 16}}>Likes : {!item.likeCount ? 0 : item.likeCount}</Text>
-          </View>
-          <View style={{flex: 1, justifyContent : 'flex-end', alignItems : 'flex-end'}}>
-            <Text style={{fontSize : 16}}>Comments : 0 </Text>
-          </View>
+        <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+          <Text style={{ fontSize: 16 }}>Likes : {!item.likeCount ? 0 : item.likeCount}</Text>
+        </View>
+        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+          <Text style={{ fontSize: 16 }}>Comments : {!item.commentCount ? 0 : item.commentCount} </Text>
+        </View>
       </View>
       <View style={styles.likeCommentContainer}>
         <TouchableOpacity onPress={() => handleLike(item)} style={styles.likeBtn}>
-          { (item.likes && item.likes.includes(firebase.auth().currentUser.uid)) ? <AntDesign name="like1" size={30} color="dodgerblue" /> : <AntDesign name="like2" size={30} color="black" />}
+          {(item.likes && item.likes.includes(firebase.auth().currentUser.uid)) ? <AntDesign name="like1" size={30} color="dodgerblue" /> : <AntDesign name="like2" size={30} color="black" />}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleComment(item)} style={styles.commentBtn}>
           <FontAwesome5 name="comment" size={30} color="black" />
@@ -250,6 +310,13 @@ const Videos = ({ route }) => {
         videoTitle={videoTitle}
         setVideoTitle={setVideoTitle}
         pickVideo={pickVideo} /> : null}
+      {commentModal ? <CommentModal commentModal={commentModal}
+        setCommentModal={setCommentModal}
+        comments={comments}
+        userComment={userComment}
+        setUserComment={setUserComment} 
+        storeComments={storeComments}
+        setComments={setComments}/> : null}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <FontAwesome5 name="arrow-left" size={20} color="black" />
         <Text style={{ fontSize: 16 }}> Go Back</Text>
@@ -357,7 +424,7 @@ const styles = StyleSheet.create({
   videoTitle: {
     fontSize: 17,
     marginTop: 10,
-    fontWeight : 'bold'
+    fontWeight: 'bold'
   }
   ,
   FlatListContainer: {
@@ -373,12 +440,12 @@ const styles = StyleSheet.create({
     // borderTopWidth : 1,
     marginTop: 5
   },
-  likeCmntCounter : {
-    display : 'flex',
-    marginTop : 10,
-    width : '100%',
-    height : 20,
-    flexDirection : 'row',
+  likeCmntCounter: {
+    display: 'flex',
+    marginTop: 10,
+    width: '100%',
+    height: 20,
+    flexDirection: 'row',
   }
   ,
   likeBtn: {
@@ -397,7 +464,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   PaginationContainer: {
-    position: 'absolute',
+    position: 'fixed',
     alignSelf: 'center',
     bottom: 0,
     width: '100%'
