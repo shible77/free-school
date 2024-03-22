@@ -5,6 +5,7 @@ import Home from './screen/Home';
 import Signup from './screen/Signup';
 import Login from './screen/Login';
 import DashBoard from './screen/DashBoard';
+import About from './screen/About';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { firebase } from './config';
 
@@ -17,6 +18,7 @@ const AuthStack = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
+      <Stack.Screen name="About" component={About}/>
     </Stack.Navigator>
   );
 };

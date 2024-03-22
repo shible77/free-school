@@ -48,7 +48,9 @@
     "react-native-svg": "^14.1.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-toast-message": "^2.2.0",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "react-native-webview": "^13.6.4",
+    "react-native-youtube-iframe": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

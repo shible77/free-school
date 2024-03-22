@@ -18,6 +18,7 @@ const Home = (props) => {
                 <View style={styles.btnContainer}>
                     <ColourfulButton buttonText={'Login'} color={['#3CB371', 'dodgerblue']} press={() => props.navigation.navigate("Login")} />
                     <ColourfulButton buttonText={'Signup'} color={['#3CB371', 'dodgerblue']} press={() => props.navigation.navigate("Signup")} />
+                    <ColourfulButton buttonText={'About Us'} color={['#3CB371', 'dodgerblue']} press={() => props.navigation.navigate("About")} />
                 </View>
             </View>
         </Background>
