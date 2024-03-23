@@ -11,6 +11,8 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 import DateModal from '../../../components/DateModal';
 import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 
 
@@ -43,6 +45,12 @@ const EditProfile = () => {
     const [selectedDivision, setSelectedDivision] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedUpazila, setSelectedUpazila] = useState(null);
+    const [initialLocation, setInitialLocation] = useState({
+        latitude: 23.8103,
+        longitude: 90.4125,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421
+    });
     const [divisions, setDivisions] = useState([])
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
@@ -124,6 +132,7 @@ const EditProfile = () => {
                         setSelectedDivision(userData.division);
                         setSelectedDistrict(userData.district);
                         setSelectedUpazila(userData.upazila);
+                        userData.latitude ? setInitialLocation({ ...initialLocation, latitude: userData.latitude, longitude: userData.longitude }) : null
 
                         if (userData.dob) {
                             const date = new Date(userData.dob.toDate());
@@ -140,6 +149,22 @@ const EditProfile = () => {
         fetchData();
     }, []);
 
+
+    const userLocation = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            setErrorMsg('Permission to access location was denied');
+            return;
+        }
+        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+        setInitialLocation({
+            ...initialLocation,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+
+        })
+        // console.log(location.coords.latitude, location.coords.longitude);
+    }
 
 
     const handleSubmit = async () => {
@@ -159,7 +184,9 @@ const EditProfile = () => {
                 division: selectedDivision,
                 district: selectedDistrict,
                 upazila: selectedUpazila,
-                dob: timestamp
+                dob: timestamp,
+                latitude: initialLocation.latitude,
+                longitude: initialLocation.longitude
             }).then(() => {
                 setShowToast(true)
                 setTimeout(() => {
@@ -220,8 +247,8 @@ const EditProfile = () => {
                                         onChangeText={(text) => setUserData({ ...userData, phone: text })}
                                     />
                                     {phoneError ? (
-                                        <View style={{flexDirection : 'row'}}>
-                                            <MaterialIcons name="error-outline" size={17} color="red"/>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <MaterialIcons name="error-outline" size={17} color="red" />
                                             <Text style={{ color: 'red' }}>{phoneError}</Text>
                                         </View>) : null}
                                 </View>
@@ -285,14 +312,33 @@ const EditProfile = () => {
                                         ))}
                                     </Picker>
                                 </View>
+                                <View style={{ marginTop: 50 }}>
+                                    <TouchableOpacity onPress={() => {userLocation()}} style={styles.locationBtn}>
+                                        <Text style={{ fontSize: 15, color: 'black' }}>Get Your Current Location</Text>
+                                    </TouchableOpacity>
+
+                                    <MapView style={styles.map}
+                                        region={{
+                                            latitude: initialLocation.latitude,
+                                            longitude: initialLocation.longitude,
+                                            latitudeDelta: 0.0922,
+                                            longitudeDelta: 0.0421
+                                        }}>
+                                        <Marker coordinate={{
+                                            latitude: initialLocation.latitude,
+                                            longitude: initialLocation.longitude,
+                                            latitudeDelta: 0.0922,
+                                            longitudeDelta: 0.0421
+                                        }} title='Marker'></Marker>
+                                    </MapView>
+                                </View>
                                 <View style={styles.btnView}>
                                     <TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
-                                        <Text style={{ fontSize: 20 }}>Update</Text>
+                                        <Text style={{ fontSize: 20 }}>Save</Text>
                                     </TouchableOpacity>
                                 </View>
-
-
                             </View>
+
                         </ScrollView>
                     </KeyboardAvoidingView>) :
                 <Loader color='black' />
@@ -327,13 +373,13 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignSelf: 'center',
-        width: '90%'
+        width: '90%',
+        marginBottom: 10,
     },
     content: {
         marginTop: 10,
         width: '90%',
         alignSelf: 'center',
-        flex: 1
 
     },
     details: {
@@ -369,7 +415,8 @@ const styles = StyleSheet.create({
     },
     btnView: {
         display: 'flex',
-        marginTop: 70
+        marginTop: 20,
+        height: 100
     },
     submitBtn: {
         backgroundColor: 'seagreen',
@@ -388,5 +435,24 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    map: {
+        width: '100%',
+        height: 250,
+        borderRadius: 10,
+        alignSelf: 'center',
+        marginTop: 15
+    },
+    locationBtn: {
+        width: '60%',
+        height: 50,
+        backgroundColor: 'lightgray',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5,
+        borderRadius: 5,
+        alignSelf: 'flex-end',
+        borderWidth: 1,
+        borderColor: 'black'
     }
 })
