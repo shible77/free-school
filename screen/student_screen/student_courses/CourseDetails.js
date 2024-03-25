@@ -5,28 +5,14 @@ import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { FontAwesome } from '@expo/vector-icons';
 import { firebase } from '../../../config'
 
 
 const CourseDetails = ({ route }) => {
   const navigation = useNavigation();
-  const courseId = route.params.courseId
-  const [courseData, setCourseData] = useState(null)
- 
-  useEffect(() => {
-    const fetchCourseData = () => {
-      try {
-        const unsubscribe = firebase.firestore().collection('courses').doc(courseId).onSnapshot((doc) => {
-          setCourseData(doc.data())
-        })
-        return () => unsubscribe() //cleanup when component is unmounted
-      } catch (err) {
-        console.log(err.code)
-      }
-    }
-    const unsubscribe = fetchCourseData()
-    return () => unsubscribe();
-  }, [])
+  const { course } = route.params
+  // console.log(course)
 
   return (
     <View style={styles.mainContainer}>
@@ -39,21 +25,24 @@ const CourseDetails = ({ route }) => {
           <AntDesign name="layout" size={30} color="black" />
           <Text style={{ fontSize: 25 }}> Course Details</Text>
         </View>
-        <TouchableOpacity onPress={() => { navigation.navigate('EditCourseDetails', { courseId: courseId }) }}>
-          <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
-            <Feather name="edit" size={24} color="black" />
-            <Text style={{ fontSize: 16, marginVertical: 2 }}>EDIT</Text>
-          </View>
-        </TouchableOpacity>
       </View>
-      {courseData ? (<ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.details}>
           <View style={styles.inputField}>
             <Text style={{ fontSize: 17, marginVertical: 5 }}>Course Title:</Text>
             <TextInput
               style={styles.input}
               placeholderTextColor={'dimgray'}
-              value={courseData.title}
+              value={course.title}
+              editable={false}
+            />
+          </View>
+          <View style={styles.inputField}>
+            <Text style={{ fontSize: 17, marginVertical: 5 }}>Instructor Name:</Text>
+            <TextInput
+              style={styles.input}
+              placeholderTextColor={'dimgray'}
+              value={course.teacher_name}
               editable={false}
             />
           </View>
@@ -62,7 +51,7 @@ const CourseDetails = ({ route }) => {
             <TextInput
               style={[styles.input, { height: 90 }]}
               placeholderTextColor={'dimgray'}
-              value={courseData.description}
+              value={course.description}
               multiline
               editable={false}
             />
@@ -72,7 +61,7 @@ const CourseDetails = ({ route }) => {
             <TextInput
               style={styles.input}
               placeholderTextColor={'dimgray'}
-              value={courseData.doc.toDate().toLocaleDateString('en-CA', {
+              value={course.doc.toDate().toLocaleDateString('en-CA', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -80,27 +69,12 @@ const CourseDetails = ({ route }) => {
               editable={false}
             />
           </View>
-          <View style={{ alignSelf: 'center', marginTop: 20, width: '90%', height: 50, alignItems: 'center', justifyContent: 'center', borderColor: 'dimgray', borderBottomWidth: 2 }}>
-            <Text style={{ fontSize: 20 }}>Your Videos and Quizzes</Text>
-          </View>
-          <View style={styles.btnView}>
-            <TouchableOpacity onPress={() => { navigation.navigate('Videos',{courseId : courseData.course_id}) }}>
-              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['midnightblue', 'maroon']} style={styles.uploadVideoBtn}>
-                <Text style={styles.btnText}>Videos</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { navigation.navigate('Quizzes',{courseId : courseData.course_id}) }}>
-              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['midnightblue', 'maroon']} style={styles.uploadVideoBtn}>
-                <Text style={styles.btnText}>Quizzes</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('InstructorInfo', { teacherId : course.teacher_id })}>
+            <FontAwesome name="user-circle-o" size={24} color="black" />
+            <Text style={{ fontSize: 17 }}> Instructor Profile</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>) : (
-        <View>
-          <ActivityIndicator size="large" color="black" />
-        </View>
-        )}
+      </ScrollView>
     </View>
   )
 }
@@ -182,5 +156,19 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginTop: 5,
     color: 'white',
+  },
+  profileButton: {
+
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 5,
+    padding: 4,
+    height: 50,
+    width: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 35,
+    flexDirection: 'row'
   }
 })

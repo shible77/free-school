@@ -220,7 +220,7 @@ const TeacherProfile = () => {
                     <TouchableOpacity onPress={() => { setShowLocation(!showLocation) }} style={styles.locationBtn}>
                         {!showLocation ? <Text style={{ fontSize: 19, color: 'white' }}>Show location in map</Text> : <Text style={{ fontSize: 19, color: 'white' }}>Hide Map</Text>}
                     </TouchableOpacity>
-                    <View style={{height : 300}}>{showLocation && <View style={{ height: 300, marginTop: 20 }}>
+                    <View style={{ height: 300 }}>{showLocation && <View style={{ height: 300, marginTop: 20 }}>
                         {userData.latitude ? <MapView style={styles.map}
                             region={{
                                 latitude: userData.latitude,
@@ -308,9 +308,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 20,
         fontSize: 20,
-        borderWidth: 2,
-        backgroundColor: 'snow',
-        borderRadius: 5,
+        borderBottomWidth: 2,
         borderColor: 'silver',
         padding: 10,
         width: '100%',
@@ -346,6 +344,6 @@ const styles = StyleSheet.create({
         height: 250,
         borderRadius: 10,
         alignSelf: 'center',
-        borderRadius : 10
+        borderRadius: 10
     }
 })

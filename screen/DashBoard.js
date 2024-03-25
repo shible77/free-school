@@ -12,7 +12,8 @@ import { firebase } from '../config'
 import MyVideos from './teacher_screen/teacher_videos/MyVideos';
 import MyQuizzes from './teacher_screen/teacher_quizzes/MyQuizzes';
 import MenuNavigation from './teacher_screen/teacher_menu/MenuNavigation';
-import CoursesNavigation from './teacher_screen/teacher_courses/CoursesNavigation';
+import TCoursesNavigation from './teacher_screen/teacher_courses/CoursesNavigation';
+import SCoursesNavigation from './student_screen/student_courses/CoursesNavigation';
 import { StatusBar } from 'react-native';
 import StudentMenuNavigation from './student_screen/student_menu/StudentMenuNavigation'
 import StudentQuizzes from './student_screen/student_quizzes/StudentQuizzes';
@@ -65,8 +66,8 @@ const DashBoard = () => {
             }}
           >
             <Tab.Screen
-              name="StudentCourses"
-              component={StudentCourses}
+              name="CoursesNavigation"
+              component={SCoursesNavigation}
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
@@ -147,7 +148,7 @@ const DashBoard = () => {
           >
             <Tab.Screen
               name="CoursesNavigation"
-              component={CoursesNavigation}
+              component={TCoursesNavigation}
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
