@@ -13,6 +13,7 @@ import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { Permissions } from 'expo';
 
 
 
@@ -150,20 +151,23 @@ const EditProfile = () => {
     }, []);
 
 
-    const userLocation = async () => {
+    useEffect(() => {
+        async function getPermission(){
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
-            return;
-        }
-        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+            console.error('Permission to access location was denied');
+        }}
+        getPermission();
+    },[])
+    const userLocation = async () => {
+        
+        let location = await Location.getCurrentPositionAsync({ accuracy : Location.Accuracy.High });
         setInitialLocation({
             ...initialLocation,
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
 
         })
-        // console.log(location.coords.latitude, location.coords.longitude);
     }
 
 
@@ -313,7 +317,7 @@ const EditProfile = () => {
                                     </Picker>
                                 </View>
                                 <View style={{ marginTop: 50 }}>
-                                    <TouchableOpacity onPress={() => {userLocation()}} style={styles.locationBtn}>
+                                    <TouchableOpacity onPress={() => { userLocation() }} style={styles.locationBtn}>
                                         <Text style={{ fontSize: 15, color: 'black' }}>Get Your Current Location</Text>
                                     </TouchableOpacity>
 

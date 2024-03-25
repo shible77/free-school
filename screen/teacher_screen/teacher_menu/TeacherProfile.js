@@ -9,10 +9,6 @@ import UploadModal from '../../../components/UploadModal';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
-
-
-
 
 import axios from 'axios';
 
