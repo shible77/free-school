@@ -95,7 +95,7 @@ const StudentCourses = () => {
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end', marginBottom: 4 }}>
             <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => navigation.navigate('EnrolledCourses')}>
-              <MaterialCommunityIcons name="table-headers-eye" size={25} color="black" />
+            <AntDesign name="export" size={24} color="black" />
               <Text style={{ fontSize: 16, marginVertical: 2 }}> Enrolled Courses</Text>
             </TouchableOpacity>
           </View>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   heading: {
-    marginTop: 130,
+    marginTop: 135,
     width: '90%',
     alignSelf: 'center',
     display: 'flex',

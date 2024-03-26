@@ -15,11 +15,11 @@ const About = ({ navigation }) => {
                     <Text style={{ fontSize: 16 }}> Go Back</Text>
                 </TouchableOpacity>
                 <View style={styles.heading}>
-                    <ColourfulText text={'Free-School'} color={['darkgray', 'black']} style={{ fontSize: 30, fontWeight: 'bold' }} />
+                    <ColourfulText text={'Free-School'} color={['#3CB371', 'dodgerblue']} style={{ fontSize: 30, fontWeight: 'bold' }} />
                 </View>
                 <ScrollView contentContainerStyle={styles.content}>
                     <View style={styles.details}>
-                        <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['silver', '#000000']} style={{
+                        <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['#3CB371', 'dodgerblue']} style={{
                             borderRadius: 10,
                             padding: 15
                         }}>
@@ -30,7 +30,7 @@ const About = ({ navigation }) => {
 
                     </View>
                     <View style={styles.videoContainer}>
-                        <ColourfulText text={'Learn more about us in the following video'} color={['darkgray', 'black']} style={{ fontSize: 18, fontWeight: 'bold', alignSelf: 'center' }} />
+                        <ColourfulText text={'Learn more about us in the following video'} color={['#3CB371', 'dodgerblue']} style={{ fontSize: 18, fontWeight: 'bold', alignSelf: 'center' }} />
                         <View style={styles.videoPlayer}>
                             <YoutubePlayer
                                 height={200}

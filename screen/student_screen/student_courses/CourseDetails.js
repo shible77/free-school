@@ -7,12 +7,39 @@ import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
 import { firebase } from '../../../config'
+import CustomStarRating from '../../../components/CustomStarRating';
 
 
 const CourseDetails = ({ route }) => {
   const navigation = useNavigation();
   const { course } = route.params
+  const [userRating, setUserRating] = useState(0);
   // console.log(course)
+
+  useEffect(() => {
+    const fetchCourseInfo = () => {
+      try {
+        const unsubscribe = firebase.firestore().collection('courses').doc(course.course_id).onSnapshot((doc) => {
+          if (doc.exists) {
+            const ones = doc.data().one ? doc.data().one.length : 0;
+            const twos = doc.data().two ? doc.data().two.length : 0;
+            const threes = doc.data().three ? doc.data().three.length : 0;
+            const fours = doc.data().four ? doc.data().four.length : 0;
+            const fives = doc.data().five ? doc.data().five.length : 0;
+            const totalScores = (1*ones) + (2*twos) + (3*threes) + (4*fours) + (5*fives);
+            const totalRatings = ones + twos + threes + fours + fives;
+            const averageRating = totalScores / totalRatings;
+            setUserRating(Math.ceil(averageRating))
+          }
+        })
+        return () => unsubscribe()
+      } catch (err) {
+        console.log(err.message)
+      }
+    }
+    fetchCourseInfo()
+  },[course.course_id])
+
 
   return (
     <View style={styles.mainContainer}>
@@ -73,6 +100,16 @@ const CourseDetails = ({ route }) => {
             <FontAwesome name="user-circle-o" size={24} color="black" />
             <Text style={{ fontSize: 17 }}> Instructor Profile</Text>
           </TouchableOpacity>
+
+          <View style={{ height: 220 }}>
+            <View style={{ alignSelf: 'center', marginTop: 20, width: '90%', height: 50, alignItems: 'center', justifyContent: 'center', borderColor: 'dimgray', borderBottomWidth: 2 }}>
+              <Text style={{ fontSize: 20 }}>Average rating of this course</Text>
+            </View>
+            <View style={styles.ratingView}>
+              <CustomStarRating rating={userRating} setRating={setUserRating} disabled={true} />
+            </View>
+          </View>
+
         </View>
       </ScrollView>
     </View>
@@ -170,5 +207,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 35,
     flexDirection: 'row'
-  }
+  },
+  ratingView: {
+    marginTop: 10,
+    width: '90%',
+    // height: 50,
+    alignSelf: 'center',
+  },
 })
