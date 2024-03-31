@@ -8,9 +8,7 @@ import Loader from '../../../components/Loader';
 import UploadModal from '../../../components/UploadModal';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-
-
-
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import axios from 'axios';
 
@@ -19,6 +17,7 @@ const StudentProfile = () => {
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
+    const [showLocation, setShowLocation] = useState(false)
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -113,7 +112,7 @@ const StudentProfile = () => {
 
             const result = response.data;
             //  console.log(result.secure_url)
-            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.secure_url})
+            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({ image: result.secure_url })
                 .then(() => {
                     setUploading(false)
                     setModalVisible(false)
@@ -130,7 +129,7 @@ const StudentProfile = () => {
     return (
         <View style={styles.mainContainer}>
             <View>
-                {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture} uploading={uploading}/> : null}
+                {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture} uploading={uploading} /> : null}
             </View>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <FontAwesome5 name="arrow-left" size={20} color="black" />
@@ -163,9 +162,9 @@ const StudentProfile = () => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.subHeading}>
-                        <Text style={{fontSize : 18}}>{"YOUR PERSONAL INFORMATION"}</Text>
+                        <Text style={{ fontSize: 18 }}>{"YOUR PERSONAL INFORMATION"}</Text>
                     </View>
-                    
+
                     <View style={styles.details}>
                         <View style={styles.inputField}>
                             <Text style={{ fontSize: 17, marginVertical: 5 }}>Full Name:</Text>
@@ -217,7 +216,29 @@ const StudentProfile = () => {
                                 editable={false}
                             />
                         </View>
-                        
+                    </View>
+                    <TouchableOpacity onPress={() => { setShowLocation(!showLocation) }} style={styles.locationBtn}>
+                        {!showLocation ? <Text style={{ fontSize: 19, color: 'white' }}>Show location in map</Text> : <Text style={{ fontSize: 19, color: 'white' }}>Hide Map</Text>}
+                    </TouchableOpacity>
+                    <View style={{ height: 300 }}>{showLocation && <View style={{ height: 300, marginTop: 20 }}>
+                        {userData.latitude ? <MapView style={styles.map}
+                            provider={PROVIDER_GOOGLE} 
+                            region={{
+                                latitude: userData.latitude,
+                                longitude: userData.longitude,
+                                latitudeDelta: 0.0922,
+                                longitudeDelta: 0.0421
+                            }}>
+                            <Marker coordinate={{
+                                latitude: userData.latitude,
+                                longitude: userData.longitude,
+                                latitudeDelta: 0.0922,
+                                longitudeDelta: 0.0421
+                            }} title='Your Location'></Marker>
+                        </MapView> : <View style={[styles.map, { justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'silver' }]}><Text style={{ fontSize: 20 }}>Not provided yet</Text></View>
+
+                        }
+                    </View>}
                     </View>
                 </ScrollView>) :
                 <Text style={{ justifyContent: 'center', alignItems: 'center' }}>No user data available</Text>
@@ -248,11 +269,13 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         display: 'flex',
         flexDirection: 'row',
+        marginBottom: 10
     },
     content: {
         marginTop: 10,
         width: '90%',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginBottom: 10
 
     },
     image: {
@@ -286,12 +309,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 20,
         fontSize: 20,
-        borderBottomWidth : 2,
-        borderColor : 'silver',
-        padding : 10,
-        width : '100%', 
-       justifyContent : 'center',
-       alignItems : 'center',
+        borderBottomWidth: 2,
+        borderColor: 'silver',
+        padding: 10,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputField: {
         display: 'flex',
@@ -306,5 +329,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingLeft: 15
     },
-
+    locationBtn: {
+        width: '90%',
+        height: 50,
+        backgroundColor: 'blueviolet',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 8,
+        borderRadius: 5,
+        marginTop: 25,
+        alignSelf: 'center'
+    },
+    map: {
+        width: '90%',
+        height: 250,
+        borderRadius: 10,
+        alignSelf: 'center',
+        borderRadius: 10
+    }
 })

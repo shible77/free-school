@@ -8,7 +8,7 @@ import Loader from '../../../components/Loader';
 import UploadModal from '../../../components/UploadModal';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import axios from 'axios';
 
@@ -222,6 +222,7 @@ const TeacherProfile = () => {
                     </TouchableOpacity>
                     <View style={{ height: 300 }}>{showLocation && <View style={{ height: 300, marginTop: 20 }}>
                         {userData.latitude ? <MapView style={styles.map}
+                            provider={PROVIDER_GOOGLE} 
                             region={{
                                 latitude: userData.latitude,
                                 longitude: userData.longitude,
@@ -233,7 +234,7 @@ const TeacherProfile = () => {
                                 longitude: userData.longitude,
                                 latitudeDelta: 0.0922,
                                 longitudeDelta: 0.0421
-                            }} title='Marker'></Marker>
+                            }} title='Your Location'></Marker>
                         </MapView> : <View style={[styles.map, { justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'silver' }]}><Text style={{ fontSize: 20 }}>Not provided yet</Text></View>
 
                         }

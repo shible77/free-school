@@ -11,7 +11,7 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 import DateModal from '../../../components/DateModal';
 import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Permissions } from 'expo';
 
@@ -152,16 +152,17 @@ const EditProfile = () => {
 
 
     useEffect(() => {
-        async function getPermission(){
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            console.error('Permission to access location was denied');
-        }}
+        async function getPermission() {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.error('Permission to access location was denied');
+            }
+        }
         getPermission();
-    },[])
+    }, [])
     const userLocation = async () => {
-        
-        let location = await Location.getCurrentPositionAsync({ accuracy : Location.Accuracy.High });
+
+        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
         setInitialLocation({
             ...initialLocation,
             latitude: location.coords.latitude,
@@ -322,6 +323,7 @@ const EditProfile = () => {
                                     </TouchableOpacity>
 
                                     <MapView style={styles.map}
+                                        provider={PROVIDER_GOOGLE}
                                         region={{
                                             latitude: initialLocation.latitude,
                                             longitude: initialLocation.longitude,
@@ -333,7 +335,7 @@ const EditProfile = () => {
                                             longitude: initialLocation.longitude,
                                             latitudeDelta: 0.0922,
                                             longitudeDelta: 0.0421
-                                        }} title='Marker'></Marker>
+                                        }} title='Your Location'></Marker>
                                     </MapView>
                                 </View>
                                 <View style={styles.btnView}>

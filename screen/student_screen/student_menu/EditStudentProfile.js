@@ -11,6 +11,9 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 import DateModal from '../../../components/DateModal';
 import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import * as Location from 'expo-location';
+import { Permissions } from 'expo';
 
 
 
@@ -36,9 +39,19 @@ const EditStudentProfile = () => {
         setOpenStartDatePicker(!openStartDatePicker);
     };
 
+
+    // let defaultDivision = 'Select Division';
+    // let defaultDistrict = 'Select District';
+    // let defaultUpazila = 'Select Upazila';
     const [selectedDivision, setSelectedDivision] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedUpazila, setSelectedUpazila] = useState(null);
+    const [initialLocation, setInitialLocation] = useState({
+        latitude: 23.8103,
+        longitude: 90.4125,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421
+    });
     const [divisions, setDivisions] = useState([])
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
@@ -50,15 +63,15 @@ const EditStudentProfile = () => {
         if (userData && userData.phone) {
             const slicedString = userData.phone.slice(0, 3);
             if (userData.phone.length == 11 && (slicedString == '011'
-            || slicedString == '013' || slicedString == '014'
-            || slicedString == '015' || slicedString == '016'
-            || slicedString == '017' || slicedString == '018'
-            || slicedString == '019')) {
+                || slicedString == '013' || slicedString == '014'
+                || slicedString == '015' || slicedString == '016'
+                || slicedString == '017' || slicedString == '018'
+                || slicedString == '019')) {
                 setPhoneError('');
             }
-            else{
+            else {
                 setPhoneError('Mobile Number is invalid');
-            } 
+            }
         } else {
             setPhoneError('');
         }
@@ -68,7 +81,7 @@ const EditStudentProfile = () => {
         // Fetch divisions
         const fetchDivisions = async () => {
             try {
-                const response =  require('../../../assets/divisions.json');
+                const response = require('../../../assets/divisions.json');
                 setDivisions(response[2].data);
             } catch (error) {
                 console.error('Error reading divisions.json:', error);
@@ -120,7 +133,8 @@ const EditStudentProfile = () => {
                         setSelectedDivision(userData.division);
                         setSelectedDistrict(userData.district);
                         setSelectedUpazila(userData.upazila);
-        
+                        userData.latitude ? setInitialLocation({ ...initialLocation, latitude: userData.latitude, longitude: userData.longitude }) : null
+
                         if (userData.dob) {
                             const date = new Date(userData.dob.toDate());
                             setSelectedStartDate(getFormatedDate(date, "YYYY/MM/DD"));
@@ -132,10 +146,30 @@ const EditStudentProfile = () => {
             } catch (err) {
                 console.log(err.message);
             }
-        }; 
+        };
         fetchData();
     }, []);
 
+
+    useEffect(() => {
+        async function getPermission() {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.error('Permission to access location was denied');
+            }
+        }
+        getPermission();
+    }, [])
+    const userLocation = async () => {
+
+        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+        setInitialLocation({
+            ...initialLocation,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+
+        })
+    }
 
 
     const handleSubmit = async () => {
@@ -155,7 +189,9 @@ const EditStudentProfile = () => {
                 division: selectedDivision,
                 district: selectedDistrict,
                 upazila: selectedUpazila,
-                dob: timestamp
+                dob: timestamp,
+                latitude: initialLocation.latitude,
+                longitude: initialLocation.longitude
             }).then(() => {
                 setShowToast(true)
                 setTimeout(() => {
@@ -211,13 +247,13 @@ const EditStudentProfile = () => {
                                         style={styles.input}
                                         placeholderTextColor={'dimgray'}
                                         cursorColor={'black'}
-                                        keyboardType='phone-pad'
+                                        keyboardType='number-pad'
                                         value={userData.phone}
                                         onChangeText={(text) => setUserData({ ...userData, phone: text })}
                                     />
                                     {phoneError ? (
-                                        <View style={{flexDirection : 'row'}}>
-                                            <MaterialIcons name="error-outline" size={17} color="red"/>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <MaterialIcons name="error-outline" size={17} color="red" />
                                             <Text style={{ color: 'red' }}>{phoneError}</Text>
                                         </View>) : null}
                                 </View>
@@ -240,11 +276,11 @@ const EditStudentProfile = () => {
                                         onValueChange={(itemValue) => setSelectedDivision(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[{name: 'Select Division'},...divisions].map((division, index) => (
+                                        {[{ name: 'Select Division' }, ...divisions].map((division, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={division.name}
-                                                value={division.name} 
+                                                value={division.name}
                                                 enabled={index !== 0} />
                                         ))}
                                     </Picker>
@@ -255,7 +291,7 @@ const EditStudentProfile = () => {
                                         onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[{name: 'Select District'},...districts].map((district, index) => (
+                                        {[{ name: 'Select District' }, ...districts].map((district, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={district.name}
@@ -271,7 +307,7 @@ const EditStudentProfile = () => {
                                         onValueChange={(itemValue) => setSelectedUpazila(itemValue)}
                                         style={styles.pickerStyle}
                                     >
-                                        {[{name: 'Select Upazila'},...upazilas].map((upazila, index) => (
+                                        {[{ name: 'Select Upazila' }, ...upazilas].map((upazila, index) => (
                                             <Picker.Item
                                                 key={index}
                                                 label={upazila.name}
@@ -281,14 +317,34 @@ const EditStudentProfile = () => {
                                         ))}
                                     </Picker>
                                 </View>
+                                <View style={{ marginTop: 50 }}>
+                                    <TouchableOpacity onPress={() => { userLocation() }} style={styles.locationBtn}>
+                                        <Text style={{ fontSize: 15, color: 'black' }}>Get Your Current Location</Text>
+                                    </TouchableOpacity>
+
+                                    <MapView style={styles.map}
+                                        provider={PROVIDER_GOOGLE}
+                                        region={{
+                                            latitude: initialLocation.latitude,
+                                            longitude: initialLocation.longitude,
+                                            latitudeDelta: 0.0922,
+                                            longitudeDelta: 0.0421
+                                        }}>
+                                        <Marker coordinate={{
+                                            latitude: initialLocation.latitude,
+                                            longitude: initialLocation.longitude,
+                                            latitudeDelta: 0.0922,
+                                            longitudeDelta: 0.0421
+                                        }} title='Your Location'></Marker>
+                                    </MapView>
+                                </View>
                                 <View style={styles.btnView}>
                                     <TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
-                                        <Text style={{ fontSize: 20 }}>Update</Text>
+                                        <Text style={{ fontSize: 20 }}>Save</Text>
                                     </TouchableOpacity>
                                 </View>
-
-
                             </View>
+
                         </ScrollView>
                     </KeyboardAvoidingView>) :
                 <Loader color='black' />
@@ -323,13 +379,13 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignSelf: 'center',
-        width: '90%'
+        width: '90%',
+        marginBottom: 10,
     },
     content: {
         marginTop: 10,
         width: '90%',
         alignSelf: 'center',
-        flex: 1
 
     },
     details: {
@@ -365,7 +421,8 @@ const styles = StyleSheet.create({
     },
     btnView: {
         display: 'flex',
-        marginTop: 70
+        marginTop: 20,
+        height: 100
     },
     submitBtn: {
         backgroundColor: 'seagreen',
@@ -384,5 +441,24 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    map: {
+        width: '100%',
+        height: 250,
+        borderRadius: 10,
+        alignSelf: 'center',
+        marginTop: 15
+    },
+    locationBtn: {
+        width: '60%',
+        height: 50,
+        backgroundColor: 'lightgray',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5,
+        borderRadius: 5,
+        alignSelf: 'flex-end',
+        borderWidth: 1,
+        borderColor: 'black'
     }
 })
