@@ -128,6 +128,9 @@ const Videos = ({ route }) => {
   };
 
   const storeComments = async () => {
+    if(userComment === '') {
+      return;
+    }
     try {
       // console.log(trackVideoId)
       // Add document to subcollection
