@@ -6,6 +6,7 @@ import CourseDetails from './CourseDetails';
 import EditCourseDetails from './EditCourseDetails';
 import Videos from './Videos';
 import Quizzes from './Quizzes';
+import CreateQuiz from './CreateQuiz';
 
 const CoursesNavigation = () => {
 
@@ -17,6 +18,7 @@ const CoursesNavigation = () => {
             <Stack.Screen name='EditCourseDetails'component={EditCourseDetails}/>
             <Stack.Screen name='Videos' component={Videos}/>
             <Stack.Screen name='Quizzes' component={Quizzes}/>
+            <Stack.Screen name='CreateQuiz' component={CreateQuiz}/>
         </Stack.Navigator>
     )
 }

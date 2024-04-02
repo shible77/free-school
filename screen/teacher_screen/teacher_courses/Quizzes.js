@@ -23,7 +23,7 @@ const Quizzes = ({ route }) => {
         <MaterialCommunityIcons name="head-question-outline" size={30} color="black" />
           <Text style={{ fontSize: 25 }}> Quizzes</Text>
         </View>
-        <TouchableOpacity onPress={() => {alert('pressed')}}>
+        <TouchableOpacity onPress={() => {navigation.navigate('CreateQuiz', { courseId: courseId })}}>
           <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
           <MaterialIcons name="post-add" size={25} color="black" />
             <Text style={{ fontSize: 16, marginVertical: 2 }}>CREATE</Text>
