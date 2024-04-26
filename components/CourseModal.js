@@ -16,14 +16,17 @@ const CourseModal = (props) => {
                         style={styles.input}
                         placeholder="Class 8: Math"
                         value={props.courseName}
+                        cursorColor={'black'}
                         onChangeText={(text) => {props.setCourseName(text)}}
                     />
                     <TextInput
                         style={styles.input2}
                         multiline
+                        textAlignVertical="top"
                         numberOfLines={4}
                         placeholder="Write short description"
                         value={props.courseDescription}
+                        cursorColor={'black'}
                         onChangeText={(text) => {props.setCourseDescription(text)}}
                     />
                     <View style={styles.modalButtons}>
@@ -47,9 +50,9 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: 'white',
-        padding: 20,
+        padding: 15,
         borderRadius: 10,
-        width: '80%',
+        width: '90%',
     },
     modalTitle: {
         fontSize: 18,
@@ -61,16 +64,18 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
-        paddingHorizontal: 10,
-        borderRadius: 5
+        paddingHorizontal: 5,
+        borderRadius: 5,
+        fontSize : 16
     },
     input2: {
-        height: 50,
+        height: 70,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 10,
-        paddingHorizontal: 10,
-        borderRadius: 5
+        paddingHorizontal: 5,
+        borderRadius: 5,
+        fontSize : 16
     },
     modalButtons: {
         flexDirection: 'row',
