@@ -7,6 +7,7 @@ import EnrolledCoursesDetails from './EnrolledCoursesDetails';
 import InstructorInfo from './InstructorInfo';
 import Videos from './Videos';
 import Quizzes from './Quizzes';
+import QuizParticipation from './QuizParticipation';
 
 const CoursesNavigation = () => {
 
@@ -20,6 +21,7 @@ const CoursesNavigation = () => {
             <Stack.Screen name='InstructorInfo' component={InstructorInfo} />
             <Stack.Screen name='Videos' component={Videos} />
             <Stack.Screen name='Quizzes' component={Quizzes} />
+            <Stack.Screen name='QuizParticipation' component={QuizParticipation} />
         </Stack.Navigator>
     )
 }
