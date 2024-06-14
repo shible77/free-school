@@ -6,13 +6,12 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { firebase } from '../../../config';
 import Loader from '../../../components/Loader';
 import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const InstructorInfo = ({ route }) => {
   const teacherId = route.params.teacherId;
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showLocation, setShowLocation] = useState(false)
   const navigation = useNavigation();
 
 
@@ -127,27 +126,27 @@ const InstructorInfo = ({ route }) => {
               />
             </View>
           </View>
-          <TouchableOpacity onPress={() => { setShowLocation(!showLocation) }} style={styles.locationBtn}>
-            {!showLocation ? <Text style={{ fontSize: 19, color: 'white' }}>Show location in map</Text> : <Text style={{ fontSize: 19, color: 'white' }}>Hide Map</Text>}
-          </TouchableOpacity>
-          <View style={{ height: 300 }}>{showLocation && <View style={{ height: 300, marginTop: 20 }}>
-            {userData.latitude ? <MapView style={styles.map}
-              region={{
-                latitude: userData.latitude,
-                longitude: userData.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421
-              }}>
-              <Marker coordinate={{
-                latitude: userData.latitude,
-                longitude: userData.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421
-              }} title='Marker'></Marker>
-            </MapView> : <View style={[styles.map, { justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'silver' }]}><Text style={{ fontSize: 20 }}>Not provided yet</Text></View>
+          <Text style={{ fontSize: 17, marginTop: 5, width: '90%', alignSelf: 'center' }}>Location in Map:</Text>
+                    <View style={{ height: 300 }}>
+                        <View style={{ height: 300, marginTop: 10 }}>
+                            {userData.latitude ? <MapView style={styles.map}
+                                provider={PROVIDER_GOOGLE}
+                                region={{
+                                    latitude: userData.latitude,
+                                    longitude: userData.longitude,
+                                    latitudeDelta: 0.0922,
+                                    longitudeDelta: 0.0421
+                                }}>
+                                <Marker coordinate={{
+                                    latitude: userData.latitude,
+                                    longitude: userData.longitude,
+                                    latitudeDelta: 0.0922,
+                                    longitudeDelta: 0.0421
+                                }} title='Your Location'></Marker>
+                            </MapView> : <View style={[styles.map, { justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'silver' }]}><Text style={{ fontSize: 20 }}>Not provided yet</Text></View>
 
-            }
-          </View>}
+                            }
+                        </View>
           </View>
         </ScrollView>) :
         <Text style={{ justifyContent: 'center', alignItems: 'center' }}>No user data available</Text>

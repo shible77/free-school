@@ -13,9 +13,40 @@ import ToastNotification from '../../../components/Toast';
 import { AntDesign } from '@expo/vector-icons';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { Permissions } from 'expo';
+import { ApolloClient, InMemoryCache, gql, ApolloProvider } from '@apollo/client';
 
+const client = new ApolloClient({
+    uri: 'https://countries.trevorblades.com/',
+    cache: new InMemoryCache()
+});
 
+const GET_COUNTRIES = gql`
+  query {
+    countries {
+      name
+      subdivisions {
+        name
+      }
+    }
+  }
+`;
+
+const CountryDataFetcher = ({ onDataFetch }) => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await client.query({ query: GET_COUNTRIES });
+                onDataFetch(data);
+            } catch (error) {
+                console.error('Error fetching country data:', error);
+            }
+        };
+
+        fetchData();
+    }, [onDataFetch]);
+
+    return null;
+};
 
 const EditProfile = () => {
     const [userData, setUserData] = useState(null);
@@ -30,6 +61,18 @@ const EditProfile = () => {
     const [selectedStartDate, setSelectedStartDate] = useState("");
     const [startedDate, setStartedDate] = useState(startDate);
     const [showToast, setShowToast] = useState(false);
+    const [countriesData, setCountriesData] = useState(null);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [selectedSubdivision, setSelectedSubdivision] = useState(null);
+
+    const handleDataFetch = data => {
+        setCountriesData(data);
+    };
+
+    const handleCountryChange = country => {
+        setSelectedCountry(country);
+        setSelectedSubdivision(null); // Reset selected subdivision when country changes
+    };
 
     function handleChangeStartDate(propDate) {
         setStartedDate(propDate);
@@ -39,24 +82,13 @@ const EditProfile = () => {
         setOpenStartDatePicker(!openStartDatePicker);
     };
 
-
-    // let defaultDivision = 'Select Division';
-    // let defaultDistrict = 'Select District';
-    // let defaultUpazila = 'Select Upazila';
-    const [selectedDivision, setSelectedDivision] = useState(null);
-    const [selectedDistrict, setSelectedDistrict] = useState(null);
-    const [selectedUpazila, setSelectedUpazila] = useState(null);
     const [initialLocation, setInitialLocation] = useState({
         latitude: 23.8103,
         longitude: 90.4125,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421
     });
-    const [divisions, setDivisions] = useState([])
-    const [districts, setDistricts] = useState([]);
-    const [upazilas, setUpazilas] = useState([]);
     const [phoneError, setPhoneError] = useState('');
-    const [showMessage, setShowMessage] = useState(false)
 
     useEffect(() => {
         // Validate phone number when userData changes
@@ -78,61 +110,14 @@ const EditProfile = () => {
     }, [userData]);
 
     useEffect(() => {
-        // Fetch divisions
-        const fetchDivisions = async () => {
-            try {
-                const response = require('../../../assets/divisions.json');
-                setDivisions(response[2].data);
-            } catch (error) {
-                console.error('Error reading divisions.json:', error);
-            }
-        };
-        fetchDivisions();
-    }, [])
-
-    useEffect(() => {
-        const fetchDistricts = async () => {
-            try {
-                if (selectedDivision) {  // Add a check here
-                    const response = require('../../../assets/districts.json');
-                    const selected_division = divisions.filter((division) => division.name === selectedDivision);
-                    // console.log(selected_division)
-                    const requiredDistricts = response[2].data.filter((district) => district.division_id === selected_division[0].id);
-                    setDistricts(requiredDistricts);
-                }
-            } catch (err) {
-                console.error('Error reading districts.json:', err);
-            }
-        };
-        fetchDistricts();
-    }, [selectedDivision]);
-
-    useEffect(() => {
-        const fetchUpazilas = async () => {
-            try {
-                if (selectedDistrict) {  // Add a check here
-                    const response = require('../../../assets/upazilas.json');
-                    const selected_district = districts.filter((district) => district.name === selectedDistrict);
-                    const requiredUpazilas = response[2].data.filter((upazila) => upazila.district_id === selected_district[0].id);
-                    setUpazilas(requiredUpazilas);
-                }
-            } catch (err) {
-                console.error('Error reading upazilas.json:', err);
-            }
-        };
-        fetchUpazilas();
-    }, [selectedDistrict]);
-
-    useEffect(() => {
         const fetchData = () => {
             try {
                 return firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).onSnapshot((doc) => {
                     if (doc.exists) {
                         const userData = doc.data();
                         setUserData(userData);
-                        setSelectedDivision(userData.division);
-                        setSelectedDistrict(userData.district);
-                        setSelectedUpazila(userData.upazila);
+                        setSelectedCountry(userData.country);
+                        setSelectedSubdivision(userData.sub_division);
                         userData.latitude ? setInitialLocation({ ...initialLocation, latitude: userData.latitude, longitude: userData.longitude }) : null
 
                         if (userData.dob) {
@@ -150,7 +135,6 @@ const EditProfile = () => {
         fetchData();
     }, []);
 
-
     useEffect(() => {
         async function getPermission() {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -159,18 +143,16 @@ const EditProfile = () => {
             }
         }
         getPermission();
-    }, [])
-    const userLocation = async () => {
+    }, []);
 
+    const userLocation = async () => {
         let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
         setInitialLocation({
             ...initialLocation,
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
-
-        })
-    }
-
+        });
+    };
 
     const handleSubmit = async () => {
         try {
@@ -186,9 +168,8 @@ const EditProfile = () => {
             await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
                 name: userData.name,
                 phone: userData.phone,
-                division: selectedDivision,
-                district: selectedDistrict,
-                upazila: selectedUpazila,
+                country: selectedCountry,
+                sub_division: selectedSubdivision,
                 dob: timestamp,
                 latitude: initialLocation.latitude,
                 longitude: initialLocation.longitude
@@ -205,160 +186,135 @@ const EditProfile = () => {
         }
     };
 
-
-
     return (
-        <View style={styles.mainContainer}>
-            {openStartDatePicker ? <DateModal openStartDatePicker={openStartDatePicker}
-                startDate={startDate} startedDate={startedDate}
-                handleChangeStartDate={handleChangeStartDate}
-                setSelectedStartDate={setSelectedStartDate}
-                handleOnPressStartDate={handleOnPressStartDate}
+        <ApolloProvider client={client}>
+            <CountryDataFetcher onDataFetch={handleDataFetch} />
+            <View style={styles.mainContainer}>
+                {openStartDatePicker ? <DateModal openStartDatePicker={openStartDatePicker}
+                    startDate={startDate} startedDate={startedDate}
+                    handleChangeStartDate={handleChangeStartDate}
+                    setSelectedStartDate={setSelectedStartDate}
+                    handleOnPressStartDate={handleOnPressStartDate}
 
-            /> : null}
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <FontAwesome5 name="arrow-left" size={20} color="black" />
-                <Text style={{ fontSize: 16 }}> Go Back</Text>
-            </TouchableOpacity>
-            <View style={styles.heading}>
-                <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }}>
-                    <Feather name="edit" size={30} color="black" />
-                    <Text style={{ fontSize: 25 }}> Edit Your Info</Text>
+                /> : null}
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <FontAwesome5 name="arrow-left" size={20} color="black" />
+                    <Text style={{ fontSize: 16 }}> Go Back</Text>
+                </TouchableOpacity>
+                <View style={styles.heading}>
+                    <View style={{ flex: 1, justifyContent: 'flex-start', flexDirection: 'row' }}>
+                        <Feather name="edit" size={30} color="black" />
+                        <Text style={{ fontSize: 25 }}> Edit Your Info</Text>
+                    </View>
                 </View>
-            </View>
-            {userData ?
-                (
-                    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                        <ScrollView contentContainerStyle={styles.content}>
-                            <View style={styles.details}>
-                                <View style={styles.inputField}>
-                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Full Name:</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholderTextColor={'dimgray'}
-                                        cursorColor={'black'}
-                                        value={userData.name}
-                                        onChangeText={(text) => setUserData({ ...userData, name: text })}
-                                    />
-                                </View>
-                                <View style={styles.inputField}>
-                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Phone: </Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholderTextColor={'dimgray'}
-                                        cursorColor={'black'}
-                                        keyboardType='number-pad'
-                                        value={userData.phone}
-                                        onChangeText={(text) => setUserData({ ...userData, phone: text })}
-                                    />
-                                    {phoneError ? (
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <MaterialIcons name="error-outline" size={17} color="red" />
-                                            <Text style={{ color: 'red' }}>{phoneError}</Text>
-                                        </View>) : null}
-                                </View>
-                                <View style={styles.inputField}>
-                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
-                                    <TouchableOpacity onPress={handleOnPressStartDate}>
+                {userData ?
+                    (
+                        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                            <ScrollView contentContainerStyle={styles.content}>
+                                <View style={styles.details}>
+                                    <View style={styles.inputField}>
+                                        <Text style={{ fontSize: 17, marginVertical: 5 }}>Full Name:</Text>
                                         <TextInput
                                             style={styles.input}
                                             placeholderTextColor={'dimgray'}
-                                            value={selectedStartDate || "Click to select date"}
-                                            editable={false}
+                                            cursorColor={'black'}
+                                            value={userData.name}
+                                            onChangeText={(text) => setUserData({ ...userData, name: text })}
                                         />
-                                    </TouchableOpacity>
-                                </View>
-                                <View>
-                                    {/* Division Dropdown */}
-                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Select Division: </Text>
-                                    <Picker
-                                        selectedValue={selectedDivision}
-                                        onValueChange={(itemValue) => setSelectedDivision(itemValue)}
-                                        style={styles.pickerStyle}
-                                    >
-                                        {[{ name: 'Select Division' }, ...divisions].map((division, index) => (
-                                            <Picker.Item
-                                                key={index}
-                                                label={division.name}
-                                                value={division.name}
-                                                enabled={index !== 0} />
-                                        ))}
-                                    </Picker>
-
-                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Select District: </Text>
-                                    <Picker
-                                        selectedValue={selectedDistrict}
-                                        onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
-                                        style={styles.pickerStyle}
-                                    >
-                                        {[{ name: 'Select District' }, ...districts].map((district, index) => (
-                                            <Picker.Item
-                                                key={index}
-                                                label={district.name}
-                                                value={district.name}
-                                                enabled={index !== 0}
+                                    </View>
+                                    <View style={styles.inputField}>
+                                        <Text style={{ fontSize: 17, marginVertical: 5 }}>Phone: </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholderTextColor={'dimgray'}
+                                            cursorColor={'black'}
+                                            keyboardType='number-pad'
+                                            value={userData.phone}
+                                            onChangeText={(text) => setUserData({ ...userData, phone: text })}
+                                        />
+                                        {phoneError ? (
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <MaterialIcons name="error-outline" size={17} color="red" />
+                                                <Text style={{ color: 'red' }}>{phoneError}</Text>
+                                            </View>) : null}
+                                    </View>
+                                    <View style={styles.inputField}>
+                                        <Text style={{ fontSize: 17, marginVertical: 5 }}>Date of Birth: </Text>
+                                        <TouchableOpacity onPress={handleOnPressStartDate}>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholderTextColor={'dimgray'}
+                                                value={selectedStartDate || "Click to select date"}
+                                                editable={false}
                                             />
-                                        ))}
-                                    </Picker>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View>
+                                        <Text style={{ fontSize: 17, marginVertical: 5 }}>Country:</Text>
+                                        <Picker
+                                            selectedValue={selectedCountry}
+                                            onValueChange={(itemValue) => handleCountryChange(itemValue)}
+                                            style={styles.pickerStyle}
+                                        >
+                                            {countriesData && countriesData.countries.map((country, index) => (
+                                                <Picker.Item key={index} label={country.name} value={country.name} />
+                                            ))}
+                                        </Picker>
+                                        <Text style={{ fontSize: 17, marginVertical: 5 }}>Subdivision:</Text>
+                                        <Picker
+                                            selectedValue={selectedSubdivision}
+                                            onValueChange={(itemValue) => setSelectedSubdivision(itemValue)}
+                                            style={styles.pickerStyle}
+                                            enabled={selectedCountry !== null}
+                                        >
+                                            {selectedCountry && countriesData &&
+                                                countriesData.countries.find(country => country.name === selectedCountry)?.subdivisions.map((subdivision, index) => (
+                                                    <Picker.Item key={index} label={subdivision.name} value={subdivision.name} />
+                                                ))
+                                            }
+                                        </Picker>
+                                    </View>
+                                    <View style={{ marginTop: 50 }}>
+                                        <TouchableOpacity onPress={() => { userLocation() }} style={styles.locationBtn}>
+                                            <Text style={{ fontSize: 15, color: 'black' }}>Get Your Current Location</Text>
+                                        </TouchableOpacity>
 
-                                    <Text style={{ fontSize: 17, marginVertical: 5 }}>Select Upazila: </Text>
-                                    <Picker
-                                        selectedValue={selectedUpazila}
-                                        onValueChange={(itemValue) => setSelectedUpazila(itemValue)}
-                                        style={styles.pickerStyle}
-                                    >
-                                        {[{ name: 'Select Upazila' }, ...upazilas].map((upazila, index) => (
-                                            <Picker.Item
-                                                key={index}
-                                                label={upazila.name}
-                                                value={upazila.name}
-                                                enabled={index !== 0}
-                                            />
-                                        ))}
-                                    </Picker>
+                                        <MapView style={styles.map}
+                                            provider={PROVIDER_GOOGLE}
+                                            region={{
+                                                latitude: initialLocation.latitude,
+                                                longitude: initialLocation.longitude,
+                                                latitudeDelta: 0.0922,
+                                                longitudeDelta: 0.0421
+                                            }}>
+                                            <Marker coordinate={{
+                                                latitude: initialLocation.latitude,
+                                                longitude: initialLocation.longitude,
+                                                latitudeDelta: 0.0922,
+                                                longitudeDelta: 0.0421
+                                            }} title='Your Location'></Marker>
+                                        </MapView>
+                                    </View>
+                                    <View style={styles.btnView}>
+                                        <TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
+                                            <Text style={{ fontSize: 20 }}>Save</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <View style={{ marginTop: 50 }}>
-                                    <TouchableOpacity onPress={() => { userLocation() }} style={styles.locationBtn}>
-                                        <Text style={{ fontSize: 15, color: 'black' }}>Get Your Current Location</Text>
-                                    </TouchableOpacity>
 
-                                    <MapView style={styles.map}
-                                        provider={PROVIDER_GOOGLE}
-                                        region={{
-                                            latitude: initialLocation.latitude,
-                                            longitude: initialLocation.longitude,
-                                            latitudeDelta: 0.0922,
-                                            longitudeDelta: 0.0421
-                                        }}>
-                                        <Marker coordinate={{
-                                            latitude: initialLocation.latitude,
-                                            longitude: initialLocation.longitude,
-                                            latitudeDelta: 0.0922,
-                                            longitudeDelta: 0.0421
-                                        }} title='Your Location'></Marker>
-                                    </MapView>
-                                </View>
-                                <View style={styles.btnView}>
-                                    <TouchableOpacity style={styles.submitBtn} onPress={() => handleSubmit()}>
-                                        <Text style={{ fontSize: 20 }}>Save</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-                        </ScrollView>
-                    </KeyboardAvoidingView>) :
-                <Loader color='black' />
-            }
-            {showToast ? <ToastNotification
-                icon={<AntDesign name="checkcircle" size={27} color="white" />}
-                message='Your Info Updated Successfully'
-                color="green"
-                bottom={55} /> : null}
-        </View>
+                            </ScrollView>
+                        </KeyboardAvoidingView>) :
+                    <Loader color='black' />
+                }
+                {showToast ? <ToastNotification
+                    icon={<AntDesign name="checkcircle" size={27} color="white" />}
+                    message='Your Info Updated Successfully'
+                    color="green"
+                    bottom={55} /> : null}
+            </View>
+        </ApolloProvider>
     )
 }
-
-export default EditProfile
 
 const styles = StyleSheet.create({
     mainContainer: {
@@ -462,3 +418,5 @@ const styles = StyleSheet.create({
         borderColor: 'black'
     }
 })
+
+export default EditProfile;
