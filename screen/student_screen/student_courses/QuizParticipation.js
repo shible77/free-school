@@ -14,6 +14,7 @@ const QuizParticipation = ({ route, navigation }) => {
     const [submit, setSubmit] = useState(false)
     const [checkAnswer, setCheckAnswer] = useState([])
     const [previousScore, setPreviousScore] = useState(0)
+    const [alreadyParticipated, setAlreadyParticipated] = useState(false)
 
     useEffect(() => {
         const unsubscribe = firebase.firestore()
@@ -25,6 +26,13 @@ const QuizParticipation = ({ route, navigation }) => {
                 if (snapshot.exists) {
                     const fetchedQuestions = snapshot.data().questions;
                     setQuestions(fetchedQuestions);
+                    if(snapshot.data().userID_along_mark){
+                        const filteredData = snapshot.data().userID_along_mark.filter(item => item.uid === firebase.auth().currentUser.uid)
+                        if(filteredData.length === 1){
+                            setPreviousScore(filteredData[0].mark)
+                            setAlreadyParticipated(true)
+                        }
+                    }
                 } else {
                     // Document doesn't exist, handle accordingly
                     console.log("Document does not exist");
@@ -42,7 +50,7 @@ const QuizParticipation = ({ route, navigation }) => {
         setAnswers(newAnswers);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         let mark = 0;
         const newAnswers = answers.map((userAnswer, index) => {
             const correctAnswer = questions[index].answer.trim();
@@ -57,6 +65,23 @@ const QuizParticipation = ({ route, navigation }) => {
         setTotalMark(mark);
         setCheckAnswer(newAnswers)
         // console.log(newAnswers);
+        const quizRef = firebase.firestore()
+        .collection('courses')
+        .doc(courseId)
+        .collection('quizzes')
+        .doc(quizId)
+       
+        try{
+            await quizRef.update({
+                userID_along_mark : firebase.firestore.FieldValue.arrayUnion({
+                    uid: firebase.auth().currentUser.uid,
+                    mark: mark
+                })
+            })
+        }catch(err){
+            console.log(err)
+        }
+
     };
 
 
@@ -111,11 +136,14 @@ const QuizParticipation = ({ route, navigation }) => {
                     </View>
                 ))}
                 <View style={{ height: 165 }}>
-                    <Text style={{ alignSelf: 'center', marginTop: 10, fontSize: 20 }}>Total Score: {totalMark}</Text>
-                    <Text style={{ alignSelf: 'center', marginTop: 10, fontSize: 20 }}>Previous Attempt Score: {previousScore}</Text>
-                    <TouchableOpacity style={styles.submitButton} onPress={() => { handleSubmit(), setSubmit(true) }}>
+                    {alreadyParticipated===false && <Text style={{ alignSelf: 'center', marginTop: 10, fontSize: 20 }}>Total Score: {totalMark}</Text>}
+                    {alreadyParticipated && <Text style={{ alignSelf: 'center', marginTop: 10, fontSize: 20 }}>Your score was : {previousScore}</Text>}
+                    {alreadyParticipated ? <View style={[styles.submitButton, {backgroundColor : 'gray'}]}>
+
+                        <Text style={{fontSize : 20}}>You have already answered the quiz once</Text>
+                    </View> : <TouchableOpacity style={styles.submitButton} onPress={() => { handleSubmit(), setSubmit(true) }}>
                         <Text style={{fontSize : 20}}>Submit</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </View>
             </ScrollView>
         </View>

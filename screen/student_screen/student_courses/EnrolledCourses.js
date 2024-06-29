@@ -61,6 +61,7 @@ const EnrolledCourses = () => {
               <Pressable onPress={() => { navigation.navigate('EnrolledCoursesDetails', { course: item }) }}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
                   <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
+                  <Text style={[styles.flatListText,{fontSize : 15}]}>{"Description: " + item.description}</Text>
                 </LinearGradient>
               </Pressable>
             )}
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   flatListContainer: {
-    height: 50,
+    height: 110,
     width: '90%',
     alignSelf: 'center',
     borderRadius: 10,
