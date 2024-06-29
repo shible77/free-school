@@ -1,10 +1,11 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ColourfulButton from '../../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { firebase } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const StudentMenu = ({ navigation }) => {
 
@@ -56,6 +57,28 @@ const StudentMenu = ({ navigation }) => {
               }
             </View>
           </TouchableOpacity>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 25, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Enrolled Courses</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Videos</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Quizzes</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Report</Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
         </ScrollView> : <Text style={{flex : 1}}>No Data available</Text>}
       <View style={styles.buttonView}>
         <ColourfulButton buttonText={'Logout'} color={['aqua', 'deeppink']} press={logoutUser} />
@@ -104,4 +127,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     // alignSelf: 'center'
   },
+  gridContainer: {
+    height: 120,
+    width: 170,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    margin: 5
+  },
+  gridText: {
+    fontSize: 20,
+    color: 'white'
+  }
 })

@@ -1,10 +1,11 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ColourfulButton from '../../../components/ColorfulButton'
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { firebase } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Menu = ({ navigation }) => {
 
@@ -23,15 +24,15 @@ const Menu = ({ navigation }) => {
           setUserData(null);
         }
       });
-  
+
     // Cleanup function to unsubscribe from the listener when the component unmounts
     return () => {
       unsubscribe();
     };
   }, []);
-  
 
-  const logoutUser = async() => {
+
+  const logoutUser = async () => {
     await AsyncStorage.removeItem('user')
     firebase.auth().signOut();
   }
@@ -55,7 +56,29 @@ const Menu = ({ navigation }) => {
               <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop: 5 }}>{' ' + userData.name ? userData.name : userData.email}</Text>
             </View>
           </TouchableOpacity>
-        </ScrollView> : <Text style={{flex : 1}}>No Data available</Text>}
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 25, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Your Courses</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Your Videos</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Your Quizzes</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => alert('pressed')}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
+                <Text style={styles.gridText}>Report</Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </ScrollView> : <Text style={{ flex: 1 }}>No Data available</Text>}
       <View style={styles.buttonView}>
         <ColourfulButton buttonText={'Logout'} color={['aqua', 'deeppink']} press={logoutUser} />
       </View>
@@ -70,20 +93,18 @@ const styles = StyleSheet.create({
     flex: 1,
     // marginVertical: 80,
     flexDirection: 'column',
-    width : '100%',
-    alignSelf : 'center'
+    width: '100%',
+    alignSelf: 'center'
   },
   scrollViewContent: {
-    flex : 1,
     marginVertical: 130,
-    border: '2px solid red',
-    width : '100%'
+    width: '100%'
   },
   buttonView: {
     flex: 1,
     position: 'absolute',
     width: '80%',
-    marginTop : 780,
+    marginTop: 780,
   },
   profile: {
     display: 'flex',
@@ -103,4 +124,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     // alignSelf: 'center'
   },
+  gridContainer: {
+    height: 120,
+    width: 170,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    margin: 5
+  },
+  gridText: {
+    fontSize: 20,
+    color: 'white'
+  }
 })
