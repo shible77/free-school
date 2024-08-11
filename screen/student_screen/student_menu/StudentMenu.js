@@ -58,17 +58,17 @@ const StudentMenu = ({ navigation }) => {
             </View>
           </TouchableOpacity>
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 25, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-            <Pressable onPress={() => alert('pressed')}>
+            <Pressable onPress={() => navigation.navigate('CoursesNavigation',{screen : 'EnrolledCourses'})}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
                 <Text style={styles.gridText}>Enrolled Courses</Text>
               </LinearGradient>
             </Pressable>
-            <Pressable onPress={() => alert('pressed')}>
+            <Pressable onPress={() => navigation.navigate('StudentVideos')}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
                 <Text style={styles.gridText}>Videos</Text>
               </LinearGradient>
             </Pressable>
-            <Pressable onPress={() => alert('pressed')}>
+            <Pressable onPress={() => navigation.navigate('StudentQuizzes')}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
                 <Text style={styles.gridText}>Quizzes</Text>
               </LinearGradient>
