@@ -212,7 +212,7 @@ const TeacherProfile = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholderTextColor={'dimgray'}
-                                value={userData.district ? userData.upazila + ', ' + userData.district + ', ' + userData.division : 'Not Provided Yet'}
+                                value={userData.country ? userData.sub_division + ', ' + userData.country  : 'Not Provided Yet'}
                                 editable={false}
                             />
                         </View>

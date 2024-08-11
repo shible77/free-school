@@ -38,6 +38,19 @@ const EnrolledCourses = () => {
     fetchEnrolledCourses()
   }, [])
 
+
+  const handleWithdraw = async (course_id) => {
+    // console.log(course_id)
+    const userEnrolledCoursesRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
+    try {
+      await userEnrolledCoursesRef.update({
+        enrolls: firebase.firestore.FieldValue.arrayRemove(course_id)
+      })
+    } catch (err) {
+      console.error('Error updating withdraw: ', err);
+    }
+
+  }
   // console.log(courseList)
 
   return (
@@ -61,7 +74,10 @@ const EnrolledCourses = () => {
               <Pressable onPress={() => { navigation.navigate('EnrolledCoursesDetails', { course: item }) }}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
                   <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
-                  <Text style={[styles.flatListText,{fontSize : 15}]}>{"Description: " + item.description}</Text>
+                  <Text style={[styles.flatListText, { fontSize: 15 }]}>{"Description: " + item.description}</Text>
+                  <TouchableOpacity style={styles.enrollButton} onPress={() => { handleWithdraw(item.course_id) }}>
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>Withdraw</Text>
+                  </TouchableOpacity>
                 </LinearGradient>
               </Pressable>
             )}
@@ -147,7 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   flatListContainer: {
-    height: 110,
+    height: 155,
     width: '90%',
     alignSelf: 'center',
     borderRadius: 10,

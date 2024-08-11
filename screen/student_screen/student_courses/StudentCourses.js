@@ -70,11 +70,15 @@ const StudentCourses = () => {
 
 
   const handleEnroll = async (courseId) => {
-    const userEnrolled = currentUserInfo.enrolls ? currentUserInfo.enrolls.includes(courseId) : false;
+    const enrolled = currentUserInfo.enrolls ? currentUserInfo.enrolls.includes(courseId) : false
+    if(enrolled === true){
+      alert("You have already enrolled in the course")
+      return
+    }
     const userRef = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
     try {
       await userRef.update({
-        enrolls: userEnrolled ? firebase.firestore.FieldValue.arrayRemove(courseId) : firebase.firestore.FieldValue.arrayUnion(courseId)
+        enrolls: firebase.firestore.FieldValue.arrayUnion(courseId)
       });
     } catch (error) {
       console.error('Error updating likes: ', error);
@@ -127,8 +131,8 @@ const StudentCourses = () => {
                     <Text style={[styles.flatListText, { marginTop: 5 }]}>{"Course Title: " + item.title}</Text>
                     <Text style={[styles.flatListText, { fontSize: 17, marginTop: 5 }]}>{"Instructor: " + item.teacher_name}</Text>
                     <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>
-                    <TouchableOpacity style={styles.enrollButton} onPress={() => { handleEnroll(item.id) }}>
-                      {currentUserInfo.enrolls && currentUserInfo.enrolls.includes(item.id) ? <Text style={{ color: 'white', fontWeight: 'bold' }}>Withdraw</Text> : <Text style={{ color: 'white', fontWeight: 'bold' }}>Enroll</Text>}
+                    <TouchableOpacity style={styles.enrollButton} onPress={() => { handleEnroll(item.id)}}>
+                      {currentUserInfo.enrolls && currentUserInfo.enrolls.includes(item.id) ? <Text style={{ color: 'white', fontWeight: 'bold' }}>Enrolled</Text> : <Text style={{ color: 'white', fontWeight: 'bold' }}>Enroll</Text>}
                     </TouchableOpacity>
                   </LinearGradient>
                 </Pressable>
