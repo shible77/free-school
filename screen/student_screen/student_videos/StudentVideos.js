@@ -24,70 +24,62 @@ const Videos = () => {
   const [commentModal, setCommentModal] = useState(false);
   const [userComment, setUserComment] = useState('');
   const [trackVideo, setTrackVideo] = useState('');
+  const [loadedVideosCount, setLoadedVideosCount] = useState(5);
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   useEffect(() => {
-    const fetchCurrentUserInfo = async () => {
-      try {
-        const doc = await firebase
-          .firestore()
-          .collection('users')
-          .doc(firebase.auth().currentUser.uid)
-          .get();
-  
-        const userInfo = doc.data();
-        setCurrentUserInfo(userInfo);
-  
-        // Fetch videos based on the user's enrolled courses
-        if (userInfo && userInfo.enrolls && userInfo.enrolls.length > 0) {
-          const unsubscribe = fetchVideos(userInfo.enrolls);
-          return () => unsubscribe(); // Clean up the listener when the component unmounts
-        }
-      } catch (error) {
-        console.error('Error fetching user info:', error);
-      }
-    };
-  
-    fetchCurrentUserInfo();
-  }, []);
-  
-  const fetchVideos = (enrolledCourseIds) => {
-    try {
-      const unsubscribe = firebase
+    // Function to handle the real-time listener for user information and videos
+    const fetchUserAndVideos = () => {
+      const unsubscribeUser = firebase
         .firestore()
-        .collection('Videos')
-        .where('course_id', 'in', enrolledCourseIds)
-        .onSnapshot(async (videoSnapshot) => {
-          const videoData = videoSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .onSnapshot(userDoc => {
+          const userInfo = userDoc.data();
+          setCurrentUserInfo(userInfo);
   
-          // Fetch course details for each video in real-time
-          const videoWithCourseData = await Promise.all(
-            videoData.map(async (video) => {
-              const courseDoc = await firebase
-                .firestore()
-                .collection('courses')
-                .doc(video.course_id)
-                .get();
+          // Fetch videos based on the user's enrolled courses in real-time
+          if (userInfo && userInfo.enrolls && userInfo.enrolls.length > 0) {
+            const unsubscribeVideos = firebase
+              .firestore()
+              .collection('Videos')
+              .where('course_id', 'in', userInfo.enrolls)
+              .onSnapshot(videoSnapshot => {
+                const videoPromises = videoSnapshot.docs.map(async videoDoc => {
+                  const videoData = videoDoc.data();
+                  const courseDoc = await firebase
+                    .firestore()
+                    .collection('courses')
+                    .doc(videoData.course_id)
+                    .get();
+                  
+                  return {
+                    id: videoDoc.id,
+                    ...videoData,
+                    course_title: courseDoc.data().title,
+                  };
+                });
   
-              return {
-                ...video,
-                course_title: courseDoc.data().title,
-              };
-            })
-          );
+                // Resolve all promises and update state
+                Promise.all(videoPromises).then(setVideos);
+              });
   
-          setVideos(videoWithCourseData);
+            // Return unsubscribe function for videos
+            return unsubscribeVideos;
+          }
+        }, error => {
+          console.error('Error fetching user info:', error);
         });
   
-      return unsubscribe; // Return the unsubscribe function to clean up the listener
-    } catch (error) {
-      console.error('Error fetching videos or course data:', error);
-    }
-  };
+      // Clean up the user listener when the component unmounts
+      return () => unsubscribeUser();
+    };
+  
+    // Initialize the function to fetch user info and videos
+    fetchUserAndVideos();
+  }, []);
+  
   
   const handleLike = async (video) => {
     const userLiked = video.likes ? video.likes.includes(firebase.auth().currentUser.uid) : false;
@@ -237,28 +229,25 @@ const Videos = () => {
           <Text style={{ fontSize: 25 }}> Videos</Text>
         </View>
       </View>
-      {videos.length == 0 ? <Text style={{ alignSelf: 'center', marginTop: 200, fontSize: 20 }}>No videos <Entypo name="emoji-sad" size={22} color="black" /></Text> : null}
+      {videos.length === 0 ? <Text style={{ alignSelf: 'center', marginTop: 200, fontSize: 20 }}>No videos <Entypo name="emoji-sad" size={22} color="black" /></Text> : null}
       <View style={styles.FlatListContainer}>
         <FlatList
-          data={videos.slice((page - 1) * 5, page * 5)} // Adjust based on pageSize
+          data={videos.slice(0, loadedVideosCount)} // Show only the loaded videos
           renderItem={renderVideoItem}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />
       </View>
-
-      {videos.length > 5 && <View style={styles.PaginationContainer}>
-        <Pagination
-          totalItems={videos.length}
-          pageSize={5}
-          currentPage={page}
-          onPageChange={setPage}
-          btnStyle={{ backgroundColor: 'black', borderRadius: 10 }}
-          activeBtnStyle={{ backgroundColor: 'lightgray' }} />
-      </View>}
+  
+      {loadedVideosCount < videos.length && (
+        <TouchableOpacity onPress={() => setLoadedVideosCount(loadedVideosCount + 5)} style={styles.loadMoreBtn}>
+          <Text style={{ color: 'white' }}>Load More</Text>
+        </TouchableOpacity>
+      )}
     </View>
-  )
+  );
+  
 }
 
 export default Videos
@@ -323,7 +312,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: 15,
-    height: 550
+    height: 610
   },
   likeCommentContainer: {
     height: 40,
@@ -360,5 +349,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     bottom: 0,
     width: '100%'
+  },
+  loadMoreBtn: {
+    alignSelf: 'center',
+    padding: 10,
+    backgroundColor: 'black',
+    borderRadius: 5,
+    marginVertical: 15,
   }
 })
