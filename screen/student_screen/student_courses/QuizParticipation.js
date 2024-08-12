@@ -7,7 +7,7 @@ import { firebase } from '../../../config'
 
 const QuizParticipation = ({ route, navigation }) => {
     const {quizId, courseId} = route.params
-    console.log(quizId, courseId)
+    // console.log(quizId, courseId)
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState(Array(10).fill(null));
     const [totalMark, setTotalMark] = useState(0);

@@ -54,7 +54,7 @@ const Quizzes = () => {
     fetchQuizzes();
   }, []);
 
-  console.log(quizzes)
+  // console.log(quizzes)
 
   return (
     <View style={styles.mainContainer}>
