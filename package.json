@@ -31,7 +31,7 @@
     "@tensorflow/tfjs": "^4.18.0",
     "@tensorflow/tfjs-react-native": "^1.0.0",
     "axios": "^1.6.7",
-    "expo": "^50.0.19",
+    "expo": "^50.0.20",
     "expo-asset": "^9.0.2",
     "expo-av": "^13.10.6",
     "expo-file-system": "^16.0.9",

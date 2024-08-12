@@ -91,7 +91,18 @@ const CourseDetails = ({ route }) => {
               editable={false}
             />
           </View>
-          
+          <View style={styles.btnView}>
+            <TouchableOpacity onPress={() => { navigation.navigate('Videos', { courseId: course.course_id }) }}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['midnightblue', 'maroon']} style={styles.uploadVideoBtn}>
+                <Text style={styles.btnText}>Videos</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { navigation.navigate('Quizzes', { courseId: course.course_id }) }}>
+              <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['midnightblue', 'maroon']} style={styles.uploadVideoBtn}>
+                <Text style={styles.btnText}>Quizzes</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
           <View style={{ height: 220 }}>
             <View style={{ alignSelf: 'center', marginTop: 20, width: '90%', height: 50, alignItems: 'center', justifyContent: 'center', borderColor: 'dimgray', borderBottomWidth: 2 }}>
               <Text style={{ fontSize: 20 }}>Average rating of this course</Text>
