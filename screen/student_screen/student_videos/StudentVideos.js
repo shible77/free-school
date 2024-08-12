@@ -28,6 +28,10 @@ const Videos = () => {
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
+  const shuffleArray = (array) => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
   useEffect(() => {
     // Function to handle the real-time listener for user information and videos
     const fetchUserAndVideos = () => {
@@ -62,7 +66,11 @@ const Videos = () => {
                 });
   
                 // Resolve all promises and update state
-                Promise.all(videoPromises).then(setVideos);
+                Promise.all(videoPromises).then((videos) => {
+                  // Shuffle videos before setting the state
+                  const shuffledVideos = shuffleArray(videos);
+                  setVideos(shuffledVideos);
+                });
               });
   
             // Return unsubscribe function for videos
