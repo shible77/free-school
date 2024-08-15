@@ -72,7 +72,7 @@ const Menu = ({ navigation }) => {
                 <Text style={styles.gridText}>Your Quizzes</Text>
               </LinearGradient>
             </Pressable>
-            <Pressable onPress={() => alert('pressed')}>
+            <Pressable onPress={() => navigation.navigate('Report')}>
               <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['royalblue', 'maroon']} style={styles.gridContainer}>
                 <Text style={styles.gridText}>Report</Text>
               </LinearGradient>
