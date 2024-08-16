@@ -19,7 +19,7 @@ const MyBarChart = (props) => {
     if(props.data.one_star===0 && props.data.two_star===0 && props.data.three_star===0 && props.data.four_star===0 && props.data.five_star===0){
         averageRating = 0
     }
-    console.log(averageRating)
+    // console.log(averageRating)
     const Remark = ["Not Rated Yet","Unacceptable", "Below Par", "Adequate", "Impressive", "Exceptional"]
     const data = {
         labels: ["One Star", "Two Star", "Three Star", "Four Star", "Five Star"],
