@@ -16,17 +16,19 @@ const EnrolledCourses = () => {
 
       userEnrolledCoursesRef.onSnapshot(async (snapshot) => {
         const userData = snapshot.data();
-        const enrolledCourses = userData.enrolls;
-        // console.log(enrolledCourses)
-        const coursePromises = (enrolledCourses.map(async (courseId) => {
-          const courseDoc = await firebase.firestore().collection('courses').doc(courseId).get()
-          if (courseDoc.exists) {
-            const courseData = courseDoc.data();
-            return courseData;
-          }
-        }))
-        const resolvedCoursesData = await Promise.all(coursePromises);
-        setCourseList(resolvedCoursesData);
+        if (userData.enrolls) {
+          const enrolledCourses = userData.enrolls;
+          // console.log(enrolledCourses)
+          const coursePromises = (enrolledCourses.map(async (courseId) => {
+            const courseDoc = await firebase.firestore().collection('courses').doc(courseId).get()
+            if (courseDoc.exists) {
+              const courseData = courseDoc.data();
+              return courseData;
+            }
+          }))
+          const resolvedCoursesData = await Promise.all(coursePromises);
+          setCourseList(resolvedCoursesData);
+        }
       });
       return () => unsubscribe();
     } catch (err) {

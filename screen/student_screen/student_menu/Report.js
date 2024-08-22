@@ -22,15 +22,17 @@ const Report = ({ navigation }) => {
                     const quizzes = await firebase.firestore().collection('courses').doc(course_id).collection('quizzes').get();
 
                     quizzes.docs.forEach((doc) => {
-                        const filteredData = doc.data().userID_along_mark.filter(item => item.uid === firebase.auth().currentUser.uid);
+                        if (doc.data().userID_along_mark) {
+                            filteredData = doc.data().userID_along_mark.filter(item => item.uid === firebase.auth().currentUser.uid);
 
-                        if (filteredData.length === 1) {
-                            const mark = {
-                                quiz_title: doc.data().title,
-                                quiz_topic: doc.data().topic,
-                                mark: filteredData[0].mark,
-                            };
-                            allMarks.push(mark);
+                            if (filteredData.length === 1) {
+                                const mark = {
+                                    quiz_title: doc.data().title,
+                                    quiz_topic: doc.data().topic,
+                                    mark: filteredData[0].mark,
+                                };
+                                allMarks.push(mark);
+                            }
                         }
                     });
                 }
@@ -54,7 +56,7 @@ const Report = ({ navigation }) => {
 
     return (
         <>
-           {loading===false ? <><View style={styles.mainContainer}>
+            {loading === false ? <><View style={styles.mainContainer}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <FontAwesome5 name="arrow-left" size={20} color="black" />
                     <Text style={{ fontSize: 16 }}> Go Back</Text>
@@ -70,8 +72,8 @@ const Report = ({ navigation }) => {
                     ))}
                 </ScrollView>
             </View>
-            {/* Render ProgressChart only if select is not null */}
-            {select && <MyProgressChart name={select} />}</> : <ActivityIndicator size={'large'} color={'blue'} /> }
+                {/* Render ProgressChart only if select is not null */}
+                {select && <MyProgressChart name={select} />}</> : <ActivityIndicator size={'large'} color={'blue'} style={{flex:1, justifyContent:'center', alignItems : 'center'}} />}
         </>
     );
 };
