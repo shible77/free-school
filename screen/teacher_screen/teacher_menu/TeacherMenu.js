@@ -53,7 +53,9 @@ const Menu = ({ navigation }) => {
                   source={{ uri: userData.image }}
                 /> :
                 <FontAwesome name="user-circle-o" size={40} color="black" />}
-              <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop: 5 }}>{' ' + userData.name ? userData.name : userData.email}</Text>
+              {userData.name ? <Text style={{ fontSize: 21, color: 'black', marginLeft: 10,marginTop : 5}}>{userData.name}</Text> : 
+              <Text style={{ fontSize: 21, color: 'black', marginLeft: 10, marginTop : 5}}>{userData.email}</Text>
+              }
             </View>
           </TouchableOpacity>
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 25, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>

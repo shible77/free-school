@@ -39,8 +39,8 @@ const Report = ({ navigation }) => {
 
                 setData(allMarks); // Update state once after collecting all marks
                 setSelect(allMarks[0]); // Set the first item as selected by default
-                setLoading(false)
             }
+            setLoading(false)
         } catch (error) {
             console.error("Error fetching data: ", error);
         }
@@ -71,6 +71,9 @@ const Report = ({ navigation }) => {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+                {data.length < 1 &&  <View style={{height : '50%', width : '90%', alignSelf : 'center', justifyContent : 'center', alignItems : 'center'}}>
+                    <Text style={{ fontSize: 25}}>No data Available!</Text>
+                </View>}
             </View>
                 {/* Render ProgressChart only if select is not null */}
                 {select && <MyProgressChart name={select} />}</> : <ActivityIndicator size={'large'} color={'blue'} style={{flex:1, justifyContent:'center', alignItems : 'center'}} />}
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // Ensures the children are laid out horizontally
         // backgroundColor: 'red',
         width: '95%',
-        alignSelf: 'center'
+        alignSelf: 'center', 
     },
     item: {
         width: 100,

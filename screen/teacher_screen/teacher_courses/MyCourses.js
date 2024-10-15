@@ -47,37 +47,30 @@ const MyCourses = () => {
 
 
   const addCourse = async () => {
-    try {
-      if (courseName.length > 0 && courseDescription.length > 0) {
-        const uID = firebase.auth().currentUser.uid;
-        const fieldValue = firebase.firestore.FieldValue.serverTimestamp();
-        await firebase.firestore().collection('courses').add({
-          title: courseName,
-          description: courseDescription,
-          teacher_id: uID,
-          doc: fieldValue
+    if (courseName.length > 0 && courseDescription.length > 0) {
+      const uID = firebase.auth().currentUser.uid;
+      const fieldValue = firebase.firestore.FieldValue.serverTimestamp();
+      await firebase.firestore().collection('courses').add({
+        title: courseName,
+        description: courseDescription,
+        teacher_id: uID,
+        doc: fieldValue
+      })
+        .then((docRef) => {
+          return docRef.update({
+            course_id: docRef.id
+          });
         })
-          .then((docRef) => {
-            return docRef.update({
-              course_id: docRef.id
-            });
-          })
-          .then(() => {
-            setCourseName('')
-            setCourseDescription('')
-            setModalVisible(false)
-            alert("Course created successfully");
-          })
-          .catch((err) => {
-            console.log("Error adding course: ", err);
-          })
-
-      }
+        .then(() => {
+          setModalVisible(false)
+          setCourseName('')
+          setCourseDescription('')
+          alert("Course created successfully");
+        })
+        .catch((err) => {
+          console.log("Error adding course: ", err);
+        })
     }
-    catch (err) {
-      console.log("Error adding course: ", err)
-    }
-
   }
 
   const searchCourse = () => {
@@ -95,9 +88,9 @@ const MyCourses = () => {
           <Text style={{ fontSize: 25 }}> Courses</Text>
         </View>
         <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end', marginBottom: 4 }}>
-          <TouchableOpacity onPress={openModal} style={{flexDirection : 'row'}}>
+          <TouchableOpacity onPress={openModal} style={{ flexDirection: 'row' }}>
             <Octicons name="diff-added" size={24} color="black" />
-            <Text style={{ fontSize: 16, marginVertical : 2}}> CREATE</Text>
+            <Text style={{ fontSize: 16, marginVertical: 2 }}> CREATE</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -123,11 +116,11 @@ const MyCourses = () => {
             data={userCourses}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <Pressable onPress={() => {navigation.navigate('CourseDetails',{ course : item })}}>
+              <Pressable onPress={() => { navigation.navigate('CourseDetails', { course: item }) }}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} colors={['slateblue', 'firebrick']} style={styles.flatListContainer}>
                   <Text style={styles.flatListText}>{"Course Title: " + item.title}</Text>
                   <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>
-                  <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{'Created at: ' + item.doc.toDate().toLocaleDateString()}</Text>
+                  <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{'Created at: ' + (item.doc?.toDate ? item.doc.toDate().toLocaleDateString() : 'Unknown')}</Text>
                 </LinearGradient>
               </Pressable>
             )}

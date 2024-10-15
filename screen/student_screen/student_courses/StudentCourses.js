@@ -70,7 +70,7 @@ const StudentCourses = () => {
 
 
   const handleEnroll = async (courseId) => {
-    const enrolled = currentUserInfo.enrolls ? currentUserInfo.enrolls.includes(courseId) : false
+    const enrolled = (currentUser && currentUserInfo.enrolls) ? currentUserInfo.enrolls.includes(courseId) : false
     if(enrolled === true){
       alert("You have already enrolled in the course")
       return
@@ -132,7 +132,7 @@ const StudentCourses = () => {
                     <Text style={[styles.flatListText, { fontSize: 17, marginTop: 5 }]}>{"Instructor: " + item.teacher_name}</Text>
                     <Text style={[styles.flatListText, { fontSize: 13, marginTop: 5 }]}>{"Description: " + item.description}</Text>
                     <TouchableOpacity style={styles.enrollButton} onPress={() => { handleEnroll(item.id)}}>
-                      {currentUserInfo.enrolls && currentUserInfo.enrolls.includes(item.id) ? <Text style={{ color: 'white', fontWeight: 'bold' }}>Enrolled</Text> : <Text style={{ color: 'white', fontWeight: 'bold' }}>Enroll</Text>}
+                      {currentUserInfo && currentUserInfo.enrolls && currentUserInfo.enrolls.includes(item.id) ? <Text style={{ color: 'white', fontWeight: 'bold' }}>Enrolled</Text> : <Text style={{ color: 'white', fontWeight: 'bold' }}>Enroll</Text>}
                     </TouchableOpacity>
                   </LinearGradient>
                 </Pressable>

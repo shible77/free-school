@@ -56,6 +56,9 @@ const Report = ({ navigation }) => {
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+                {data.length < 1 &&  <View style={{height : '50%', width : '90%', alignSelf : 'center', justifyContent : 'center', alignItems : 'center'}}>
+                    <Text style={{ fontSize: 25}}>No data Available!</Text>
+                </View>}
                 {select && <MyBarChart data={select} />}
             </View> : <ActivityIndicator size={'large'} color={'blue'} />}
         </View>
