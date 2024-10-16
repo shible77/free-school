@@ -70,7 +70,7 @@ const StudentCourses = () => {
 
 
   const handleEnroll = async (courseId) => {
-    const enrolled = (currentUser && currentUserInfo.enrolls) ? currentUserInfo.enrolls.includes(courseId) : false
+    const enrolled = (currentUserInfo && currentUserInfo.enrolls) ? currentUserInfo.enrolls.includes(courseId) : false
     if(enrolled === true){
       alert("You have already enrolled in the course")
       return
