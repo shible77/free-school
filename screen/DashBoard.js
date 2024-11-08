@@ -18,6 +18,7 @@ import { StatusBar } from 'react-native';
 import StudentMenuNavigation from './student_screen/student_menu/StudentMenuNavigation'
 import StudentQuizzes from './student_screen/student_quizzes/StudentQuizzes';
 import ActivityIndicator from '../components/ActivityIndicator'
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -25,7 +26,7 @@ const DashBoard = () => {
 
   const [userType, setUserType] = useState('');
   const [loading, setLoading] = useState(false);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,7 +36,7 @@ const DashBoard = () => {
         setTimeout(() => {
           setUserType(userData.type);
           setLoading(false)
-        }, 3000)    
+        }, 3000)
       } catch (err) {
         console.log(err.message);
       }
@@ -68,16 +69,28 @@ const DashBoard = () => {
             <Tab.Screen
               name="CoursesNavigation"
               component={SCoursesNavigation}
-              options={{
+              options={({ route }) => ({
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
-                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
                 ),
-              }}
+                tabBarStyle: {
+                  display: getTabBarVisibility(route),
+                  position: 'absolute',
+                  top: 45,
+                  left: 8,
+                  right: 8,
+                  elevation: 0,
+                  // backgroundColor: '#ffffff',
+                  backgroundColor: 'gainsboro',
+                  borderRadius: 15,
+                  height: 80,
+                },
+              })}
             />
             <Tab.Screen
               name="StudentVideos"
@@ -99,18 +112,18 @@ const DashBoard = () => {
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <MaterialCommunityIcons name="message-question-outline" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
-                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>QUIZZES</Text>
-                ),
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
+                )
               }}
             />
             <Tab.Screen
               name="StudentMenuNavigation"
               component={StudentMenuNavigation}
-              options={{
+              options={({ route }) => ({
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
                     <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
@@ -119,7 +132,19 @@ const DashBoard = () => {
                 tabBarLabel: ({ focused }) => (
                   <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
                 ),
-              }}
+                tabBarStyle: {
+                  display: getTabBarVisibility(route),
+                  position: 'absolute',
+                  top: 45,
+                  left: 8,
+                  right: 8,
+                  elevation: 0,
+                  // backgroundColor: '#ffffff',
+                  backgroundColor: 'gainsboro',
+                  borderRadius: 15,
+                  height: 80,
+                },
+              })}
             />
           </Tab.Navigator>
         </View></>
@@ -149,7 +174,7 @@ const DashBoard = () => {
             <Tab.Screen
               name="CoursesNavigation"
               component={TCoursesNavigation}
-              options={{
+              options={({ route}) => ({
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
                     <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
@@ -158,7 +183,19 @@ const DashBoard = () => {
                 tabBarLabel: ({ focused }) => (
                   <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
                 ),
-              }}
+                tabBarStyle: {
+                  display: getTabBarVisibility(route),
+                  position: 'absolute',
+                  top: 45,
+                  left: 8,
+                  right: 8,
+                  elevation: 0,
+                  // backgroundColor: '#ffffff',
+                  backgroundColor: 'gainsboro',
+                  borderRadius: 15,
+                  height: 80,
+                }
+              })}
             />
             <Tab.Screen
               name="MyVideos"
@@ -192,16 +229,28 @@ const DashBoard = () => {
             <Tab.Screen
               name="MenuNavigation"
               component={MenuNavigation}
-              options={{
+              options={({ route}) => ({
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
-                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
                 ),
-              }}
+                tabBarStyle: {
+                  display: getTabBarVisibility(route),
+                  position: 'absolute',
+                  top: 45,
+                  left: 8,
+                  right: 8,
+                  elevation: 0,
+                  // backgroundColor: '#ffffff',
+                  backgroundColor: 'gainsboro',
+                  borderRadius: 15,
+                  height: 80,
+                }
+              })}
             />
           </Tab.Navigator>
         </View>
@@ -217,5 +266,16 @@ const DashBoard = () => {
     )
   }
 }
+
+const getTabBarVisibility = route => {
+  // console.log(route);
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'StudentMenu'
+    // console.log(routeName);
+  if (routeName === 'StudentMenu' || routeName === 'StudentCourses' || routeName === 'MyCourses' || routeName === 'TeacherMenu') {
+    return 'flex'
+  }else{
+    return 'none'
+  }
+};
 
 export default DashBoard;

@@ -132,8 +132,8 @@ const StudentProfile = () => {
                 {modalVisible ? <UploadModal isModalVisible={modalVisible} setModalVisible={setModalVisible} pickImage={pickImage} takePicture={takePicture} uploading={uploading} /> : null}
             </View>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <FontAwesome5 name="arrow-left" size={20} color="black" />
-                <Text style={{ fontSize: 16 }}> Go Back</Text>
+                <FontAwesome5 name="arrow-left" size={25} color="black" />
+                {/* <Text style={{ fontSize: 16 }}> Go Back</Text> */}
             </TouchableOpacity>
 
             <View style={styles.heading}>
@@ -255,12 +255,22 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     backButton: {
-        marginLeft: 15,
+        marginLeft : 5,
         display: 'flex',
         flexDirection: 'row',
-        marginTop: 130,
-        width: '90%',
-        justifyContent: 'flex-start'
+        marginTop: 45,
+        width: 50,
+        justifyContent: 'center',
+        height : 50,
+        // backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        alignItems : 'center',
+        borderRadius : 25,
+        padding : 5,  
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25, 
+        shadowRadius: 3.84,
+        elevation: 5
     },
     heading: {
         marginTop: 20,

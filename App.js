@@ -116,30 +116,22 @@ const App = () => {
   if (!storedData) {
     return (
       <NavigationContainer>
-        {user ? (
-          verified ? (
-            <DashBoard />
+        {user && verified ? (
+          <DashBoard />
           ) : (
             <AuthStack />
-          )
-        ) : (
-          <AuthStack />
-        )}
+          )}
       </NavigationContainer>
     );
   }
 
   return (
     <NavigationContainer>
-      {user ? (
-        verified ? (
+      {user && verified ? (     
           <DashBoard />
         ) : (
-          null
-        )
-      ) : (
-        null
-      )}
+          <AuthStack />
+        )}
     </NavigationContainer>
   );
 }
