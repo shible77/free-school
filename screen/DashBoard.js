@@ -232,11 +232,11 @@ const DashBoard = () => {
               options={({ route}) => ({
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
-                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
                 ),
                 tabBarStyle: {
                   display: getTabBarVisibility(route),
