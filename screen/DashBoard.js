@@ -72,11 +72,11 @@ const DashBoard = () => {
               options={({ route }) => ({
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <Feather name="book-open" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
-                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>COURSES</Text>
                 ),
                 tabBarStyle: {
                   display: getTabBarVisibility(route),
@@ -112,12 +112,12 @@ const DashBoard = () => {
               options={{
                 tabBarIcon: ({ focused }) => (
                   <View style={{ alignItems: 'center', justifyContent: 'center', top: 5 }}>
-                    <Entypo name="menu" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
+                    <MaterialCommunityIcons name="message-question-outline" size={22} style={{ color: focused ? '#e32f45' : '#748c94' }} />
                   </View>
                 ),
                 tabBarLabel: ({ focused }) => (
-                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MENU</Text>
-                )
+                  <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>QUIZZES</Text>
+                ),
               }}
             />
             <Tab.Screen
